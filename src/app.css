@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	html {
+		@apply scroll-smooth;
+	}
+
+	body {
+		@apply bg-page-light font-heading text-ink-light tracking-tight dark:bg-page-dark dark:text-ink-dark;
+	}
+
+	h1,
+	h2,
+	h3 {
+		@apply font-bold tracking-tighter;
+	}
+}
