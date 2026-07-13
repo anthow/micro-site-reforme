@@ -22,7 +22,7 @@
 	const currentYear = new Date().getFullYear();
 
 	function logoImageClass(id: number) {
-		return id === 1 ? 'h-14 w-auto object-contain sm:h-16' : 'h-12 w-auto object-contain';
+		return id === 1 ? 'h-16 w-auto object-contain sm:h-[4.5rem]' : 'h-12 w-auto object-contain';
 	}
 </script>
 
