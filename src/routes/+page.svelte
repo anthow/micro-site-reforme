@@ -20,6 +20,10 @@
 			: []
 	);
 	const currentYear = new Date().getFullYear();
+
+	function logoImageClass(id: number) {
+		return id === 1 ? 'h-14 w-auto object-contain sm:h-16' : 'h-12 w-auto object-contain';
+	}
 </script>
 
 <svelte:head>
@@ -146,7 +150,7 @@
 									<img
 										src={logo.url}
 										alt={`Logo fédération ${logo.id}`}
-										class="h-12 w-auto object-contain"
+										class={logoImageClass(logo.id)}
 										loading="lazy"
 									/>
 								</a>
@@ -154,7 +158,7 @@
 								<img
 									src={logo.url}
 									alt={`Logo fédération ${logo.id}`}
-									class="h-12 w-auto object-contain"
+									class={logoImageClass(logo.id)}
 									loading="lazy"
 								/>
 							{/if}
