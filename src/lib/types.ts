@@ -17,3 +17,17 @@ export interface LogoFede {
 	url: string | null;
 	'url-website': string | null;
 }
+
+export interface Depute {
+	id: number;
+	nom: string;
+	circonscription: string;
+	email: string;
+	actif: boolean;
+	parti: string | null;
+	fonction: string | null;
+	role: 'depute' | 'ministre';
+	sexe: 'M' | 'F' | null;
+}
+
+export type BoutonClic = 'mailto' | 'gmail' | 'outlook' | 'copier';
