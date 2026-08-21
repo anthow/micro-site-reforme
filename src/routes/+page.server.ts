@@ -1,3 +1,4 @@
+import { filterPlayableFacebookVideos } from '$lib/facebookVideo';
 import { supabase } from '$lib/supabaseClient';
 import type { FaqEntry, Homepage, LogoFede, Video } from '$lib/types';
 import type { PageServerLoad } from './$types';
@@ -14,11 +15,16 @@ export const load: PageServerLoad = async () => {
 		supabase.from('videos').select('id, url').order('id', { ascending: true })
 	]);
 
+	const fetchedVideos = (videosResult.data ?? []) as Video[];
+	const videos = videosResult.error
+		? fetchedVideos
+		: await filterPlayableFacebookVideos(fetchedVideos);
+
 	return {
 		homepage: homepageResult.data as Homepage | null,
 		faq: (faqResult.data ?? []) as unknown as FaqEntry[],
 		logos: (logosResult.data ?? []) as LogoFede[],
-		videos: (videosResult.data ?? []) as Video[],
+		videos,
 		errors: {
 			homepage: homepageResult.error?.message ?? null,
 			faq: faqResult.error?.message ?? null,

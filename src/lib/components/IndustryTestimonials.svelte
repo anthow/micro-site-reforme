@@ -14,7 +14,7 @@
 		const params = new URLSearchParams({
 			href: postUrl,
 			show_text: 'false',
-			width: '500'
+			width: '267'
 		});
 		return `https://www.facebook.com/plugins/video.php?${params.toString()}`;
 	}
@@ -24,9 +24,9 @@
 	}
 </script>
 
-<div class="flex flex-wrap gap-6">
+<div class="flex flex-wrap justify-center gap-6">
 	{#each items as video (video.id)}
-		<div class="w-full lg:w-[calc(50%-0.75rem)]">
+		<div class="w-full max-w-[280px] lg:w-[267px] lg:max-w-none">
 			<div
 				class="relative aspect-[9/16] w-full overflow-hidden rounded-lg bg-ink-light/5 dark:bg-ink-dark/5"
 			>
