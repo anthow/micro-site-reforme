@@ -18,6 +18,11 @@ export interface LogoFede {
 	'url-website': string | null;
 }
 
+export interface Video {
+	id: number;
+	url: string | null;
+}
+
 export interface Depute {
 	id: number;
 	nom: string;

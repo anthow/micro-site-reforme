@@ -1,5 +1,6 @@
 <script lang="ts">
 	import FaqItem from '$lib/components/FaqItem.svelte';
+	import IndustryTestimonials from '$lib/components/IndustryTestimonials.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import type { PageData } from './$types';
 
@@ -8,6 +9,7 @@
 	const homepage = $derived(data.homepage);
 	const faq = $derived(data.faq);
 	const logos = $derived(data.logos ?? []);
+	const videos = $derived((data.videos ?? []).filter((video) => Boolean(video.url)));
 	const errors = $derived(data.errors);
 
 	const siteName = $derived(homepage?.Titre ?? 'Mobilisation sectorielle');
@@ -48,7 +50,7 @@
 	</header>
 
 	<main class="flex-1">
-		{#if errors.homepage || errors.faq}
+		{#if errors.homepage || errors.faq || errors.videos}
 			<div
 				class="border-b border-accent/30 bg-accent/10 px-4 py-3 text-center font-sans text-sm text-ink-light dark:text-ink-dark"
 				role="status"
@@ -129,6 +131,22 @@
 				{/if}
 			</div>
 		</section>
+
+		{#if videos.length > 0}
+			<section
+				id="temoignages"
+				class="border-t border-ink-light/10 bg-ink-light/[0.02] dark:border-ink-dark/10 dark:bg-ink-dark/[0.02]"
+			>
+				<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+					<h2
+						class="mb-10 text-center font-heading text-xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-2xl"
+					>
+						Témoignages du secteur
+					</h2>
+					<IndustryTestimonials {videos} />
+				</div>
+			</section>
+		{/if}
 	</main>
 
 	<!-- Footer -->
