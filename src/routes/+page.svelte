@@ -105,11 +105,11 @@
 			{/if}
 		{/if}
 
-		<div class="bg-page-light dark:bg-page-dark">
+		<div class="bg-page-light px-4 py-8 dark:bg-page-dark sm:px-6 sm:py-10">
 			<img
-				src={encodeURI('/Banderole (Ré)Former sans exclure.jpeg')}
+				src={encodeURI('/Banderole (Ré)Former sans exclure.png')}
 				alt="(Ré)Former sans exclure"
-				class="mx-auto block w-full object-contain"
+				class="mx-auto block w-full max-w-md object-contain sm:max-w-xl"
 				loading="lazy"
 			/>
 		</div>
@@ -148,13 +148,13 @@
 			>
 				<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
 					<img
-						src={encodeURI('/Ecoutez le terrain.jpeg')}
+						src={encodeURI('/Ecoutez le terrain.png')}
 						alt="Écoutez le terrain"
 						class="mx-auto mb-8 block h-36 w-auto object-contain sm:h-44"
 						loading="lazy"
 					/>
 					<h2
-						class="mb-10 text-center font-heading text-3xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-4xl"
+						class="mb-10 text-center font-heading text-4xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-5xl lg:text-6xl"
 					>
 						Témoignages du secteur
 					</h2>
