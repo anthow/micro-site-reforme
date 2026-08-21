@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FaqItem from '$lib/components/FaqItem.svelte';
 	import IndustryTestimonials from '$lib/components/IndustryTestimonials.svelte';
-	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import SiteHeader from '$lib/components/SiteHeader.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -34,20 +34,7 @@
 </svelte:head>
 
 <div class="flex min-h-screen flex-col">
-	<!-- Header -->
-	<header
-		class="sticky top-0 z-50 border-b border-ink-light/10 bg-page-light/95 backdrop-blur-sm dark:border-ink-dark/10 dark:bg-page-dark/95"
-	>
-		<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-			<a
-				href="/"
-				class="font-heading text-lg font-bold tracking-tight text-accent sm:text-xl"
-			>
-				Laissez-nous travailler !
-			</a>
-			<ThemeToggle />
-		</div>
-	</header>
+	<SiteHeader />
 
 	<main class="flex-1">
 		{#if errors.homepage || errors.faq || errors.videos}

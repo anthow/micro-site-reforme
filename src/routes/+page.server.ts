@@ -16,9 +16,10 @@ export const load: PageServerLoad = async () => {
 	]);
 
 	const fetchedVideos = (videosResult.data ?? []) as Video[];
-	const videos = videosResult.error
+	const playableVideos = videosResult.error
 		? fetchedVideos
 		: await filterPlayableFacebookVideos(fetchedVideos);
+	const videos = moveVideoToPosition(playableVideos, 2, 5);
 
 	return {
 		homepage: homepageResult.data as Homepage | null,
@@ -33,3 +34,13 @@ export const load: PageServerLoad = async () => {
 		}
 	};
 };
+
+function moveVideoToPosition(videos: Video[], id: number, position: number): Video[] {
+	const from = videos.findIndex((video) => video.id === id);
+	if (from < 0) return videos;
+
+	const next = [...videos];
+	const [item] = next.splice(from, 1);
+	next.splice(Math.min(Math.max(position - 1, 0), next.length), 0, item);
+	return next;
+}

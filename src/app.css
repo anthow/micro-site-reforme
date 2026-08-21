@@ -5,10 +5,11 @@
 @layer base {
 	html {
 		@apply scroll-smooth;
+		scroll-padding-top: 5rem;
 	}
 
 	body {
-		@apply bg-page-light font-heading text-ink-light tracking-tight dark:bg-page-dark dark:text-ink-dark;
+		@apply bg-page-light font-heading text-ink-light tracking-tight;
 	}
 
 	h1,
