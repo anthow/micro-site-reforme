@@ -150,11 +150,11 @@
 					<img
 						src={encodeURI('/Ecoutez le terrain.png')}
 						alt="Écoutez le terrain"
-						class="mx-auto mb-8 block h-36 w-auto object-contain sm:h-44"
+						class="mx-auto mb-8 block h-52 w-auto object-contain sm:h-64"
 						loading="lazy"
 					/>
 					<h2
-						class="mb-10 text-center font-heading text-4xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-5xl lg:text-6xl"
+						class="mb-10 text-center font-heading text-xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-2xl"
 					>
 						Témoignages du secteur
 					</h2>
