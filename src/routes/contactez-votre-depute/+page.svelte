@@ -4,7 +4,8 @@
 		MAIL_SUBJECT,
 		buildMailLinks,
 		buildMessage,
-		destinataireLabel,
+		destinataireLabelDansCirconscription,
+		listCirconscriptions,
 		sortByPartiPuisNom
 	} from '$lib/campagneMail';
 	import { supabase } from '$lib/supabaseClient';
@@ -19,6 +20,7 @@
 	const currentYear = new Date().getFullYear();
 
 	let selectedId = $state<number | null>(null);
+	let selectedCirconscription = $state('');
 	let message = $state('');
 	let putInBcc = $state(false);
 	let copiedEmail = $state(false);
@@ -26,18 +28,29 @@
 	let copyEmailReset: ReturnType<typeof setTimeout> | undefined;
 	let copyMessageReset: ReturnType<typeof setTimeout> | undefined;
 
-	const ministres = $derived(
-		sortByPartiPuisNom(deputes.filter((item) => item.role === 'ministre'))
+	const elus = $derived(sortByPartiPuisNom(deputes));
+	const circonscriptions = $derived(listCirconscriptions(elus));
+	const elusFiltres = $derived(
+		selectedCirconscription
+			? elus.filter((item) => item.circonscription === selectedCirconscription)
+			: []
 	);
-	const elus = $derived(sortByPartiPuisNom(deputes.filter((item) => item.role !== 'ministre')));
-	const selected = $derived(deputes.find((depute) => depute.id === selectedId) ?? null);
+	const selected = $derived(elus.find((depute) => depute.id === selectedId) ?? null);
+
+	function onCirconscriptionChange(event: Event) {
+		selectedCirconscription = (event.currentTarget as HTMLSelectElement).value;
+		selectedId = null;
+		message = '';
+	}
 
 	function onDeputeChange(event: Event) {
 		const value = (event.currentTarget as HTMLSelectElement).value;
 		selectedId = value ? Number(value) : null;
-		const depute = deputes.find((item) => item.id === selectedId);
+		const depute = elus.find((item) => item.id === selectedId);
 		if (depute) {
 			message = buildMessage(depute.nom, depute.sexe);
+		} else {
+			message = '';
 		}
 	}
 
@@ -116,10 +129,10 @@
 </script>
 
 <svelte:head>
-	<title>Contactez votre député ou ministre | Laissez-nous travailler !</title>
+	<title>Contactez votre député | Laissez-nous travailler !</title>
 	<meta
 		name="description"
-		content="La réforme des CISP n’est pas un détail technique. Écrivez à votre député ou ministre wallon pour défendre une insertion qui laisse le temps."
+		content="La réforme des CISP n’est pas un détail technique. Écrivez à votre député wallon pour défendre une insertion qui laisse le temps."
 	/>
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
@@ -144,7 +157,7 @@
 				>
 					<span class="inline-flex max-w-full flex-wrap items-center justify-center gap-3">
 						<img src="/cone.png" alt="" class="h-8 w-auto sm:h-10" aria-hidden="true" />
-						<span>Contactez votre député ou ministre</span>
+						<span>Contactez votre député</span>
 						<img src="/cone.png" alt="" class="h-8 w-auto sm:h-10" aria-hidden="true" />
 					</span>
 				</h1>
@@ -152,7 +165,7 @@
 					class="font-heading text-base font-medium leading-snug tracking-tight text-ink-light/90 dark:text-ink-dark/90"
 				>
 					La réforme des CISP n’est pas un détail technique : c’est la vision de l’insertion que nous
-					voulons défendre. Écrivez à votre député ou à un ministre du gouvernement wallon.
+					voulons défendre. Choisissez votre circonscription, puis écrivez à votre député.
 					Rien n’est envoyé à votre place.
 				</p>
 			</div>
@@ -178,28 +191,38 @@
 			<div class="flex flex-col gap-6">
 				<label class="block">
 					<span class="mb-2 block font-heading text-sm font-semibold tracking-tight">
-						Votre député ou ministre
+						Votre circonscription
 					</span>
 					<select
 						class="w-full rounded-lg border border-ink-light/15 bg-white px-3 py-3 font-heading text-base tracking-tight text-ink-light outline-none transition-colors focus:border-accent dark:border-ink-dark/20 dark:bg-[#1A1A1A] dark:text-ink-dark"
+						value={selectedCirconscription}
+						onchange={onCirconscriptionChange}
+					>
+						<option value="">Choisissez votre circonscription</option>
+						{#each circonscriptions as circonscription (circonscription)}
+							<option value={circonscription}>{circonscription}</option>
+						{/each}
+					</select>
+				</label>
+
+				<label class="block">
+					<span class="mb-2 block font-heading text-sm font-semibold tracking-tight">
+						Votre député
+					</span>
+					<select
+						class="w-full rounded-lg border border-ink-light/15 bg-white px-3 py-3 font-heading text-base tracking-tight text-ink-light outline-none transition-colors focus:border-accent disabled:opacity-50 dark:border-ink-dark/20 dark:bg-[#1A1A1A] dark:text-ink-dark"
 						value={selectedId ?? ''}
 						onchange={onDeputeChange}
+						disabled={!selectedCirconscription}
 					>
-						<option value="">Choisissez un destinataire</option>
-						{#if ministres.length > 0}
-							<optgroup label="Gouvernement wallon">
-								{#each ministres as depute (depute.id)}
-									<option value={depute.id}>{destinataireLabel(depute)}</option>
-								{/each}
-							</optgroup>
-						{/if}
-						{#if elus.length > 0}
-							<optgroup label="Députés wallons">
-								{#each elus as depute (depute.id)}
-									<option value={depute.id}>{destinataireLabel(depute)}</option>
-								{/each}
-							</optgroup>
-						{/if}
+						<option value="">
+							{selectedCirconscription
+								? 'Choisissez votre député'
+								: 'Choisissez d’abord votre circonscription'}
+						</option>
+						{#each elusFiltres as depute (depute.id)}
+							<option value={depute.id}>{destinataireLabelDansCirconscription(depute)}</option>
+						{/each}
 					</select>
 				</label>
 

@@ -47,6 +47,7 @@ export function buildMailLinks(options: {
 export type DestinataireRole = 'depute' | 'ministre';
 
 const PARTI_ORDRE = ['mr', 'les engages', 'ps', 'ptb', 'ecolo'];
+const PARTIS_MAJORITE = new Set(['mr', 'les engages']);
 
 function normalizeParti(parti: string | null | undefined): string {
 	return (parti ?? '')
@@ -54,6 +55,10 @@ function normalizeParti(parti: string | null | undefined): string {
 		.toLowerCase()
 		.normalize('NFD')
 		.replace(/\p{M}/gu, '');
+}
+
+export function estPartiMajorite(parti: string | null | undefined): boolean {
+	return PARTIS_MAJORITE.has(normalizeParti(parti));
 }
 
 function partiRank(parti: string | null | undefined): number {
@@ -95,4 +100,21 @@ export function destinataireLabel(options: {
 }): string {
 	const detail = destinataireDetail(options);
 	return detail ? `${options.nom} — ${detail}` : options.nom;
+}
+
+export function destinataireLabelDansCirconscription(options: {
+	nom: string;
+	parti: string | null;
+}): string {
+	const parti = options.parti?.trim();
+	return parti ? `${options.nom} — ${parti}` : options.nom;
+}
+
+export function listCirconscriptions(items: { circonscription: string | null }[]): string[] {
+	const names = new Set<string>();
+	for (const item of items) {
+		const name = item.circonscription?.trim();
+		if (name) names.add(name);
+	}
+	return [...names].sort((a, b) => a.localeCompare(b, 'fr'));
 }
