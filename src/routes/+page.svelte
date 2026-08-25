@@ -83,9 +83,9 @@
 				<section class="mx-auto max-w-5xl px-3 py-7 sm:px-4 sm:py-10">
 					{#each introParagraphs as paragraph}
 						<p
-							class="mb-4 whitespace-pre-line font-heading text-base font-medium leading-snug tracking-tight text-ink-light/90 last:mb-0 dark:text-ink-dark/90"
+							class="mb-4 whitespace-pre-line font-heading text-base font-medium leading-snug tracking-tight text-ink-light/90 last:mb-0 dark:text-ink-dark/90 [&_strong]:font-bold"
 						>
-							{paragraph}
+							{@html paragraph}
 						</p>
 					{/each}
 				</section>
