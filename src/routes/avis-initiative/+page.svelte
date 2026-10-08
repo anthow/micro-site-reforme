@@ -177,14 +177,14 @@
 					{:else if group.bloc.type === 'h2'}
 						<h2
 							id={group.bloc.ancre ?? undefined}
-							class="mt-12 scroll-mt-36 font-heading text-xl font-bold tracking-tighter text-ink-light sm:text-2xl"
+							class="mt-12 scroll-mt-24 font-heading text-xl font-bold tracking-tighter text-ink-light sm:text-2xl"
 						>
 							{plain(group.bloc.texte)}
 						</h2>
 					{:else if group.bloc.type === 'h3'}
 						<h3
 							id={group.bloc.ancre ?? undefined}
-							class="mt-8 scroll-mt-36 font-heading text-lg font-bold tracking-tighter text-ink-light"
+							class="mt-8 scroll-mt-24 font-heading text-lg font-bold tracking-tighter text-ink-light"
 						>
 							{plain(group.bloc.texte)}
 						</h3>
