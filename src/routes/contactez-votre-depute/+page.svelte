@@ -134,6 +134,18 @@
 		name="description"
 		content="La réforme des CISP n’est pas un détail technique. Écrivez à votre député wallon pour défendre une insertion qui laisse le temps."
 	/>
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Contactez votre député | Laissez-nous travailler !" />
+	<meta
+		property="og:description"
+		content="La réforme des CISP n’est pas un détail technique. Écrivez à votre député wallon pour défendre une insertion qui laisse le temps."
+	/>
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Contactez votre député | Laissez-nous travailler !" />
+	<meta
+		name="twitter:description"
+		content="La réforme des CISP n’est pas un détail technique. Écrivez à votre député wallon pour défendre une insertion qui laisse le temps."
+	/>
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 

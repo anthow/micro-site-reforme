@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => {
 	const [deputesResult, logosResult] = await Promise.all([
 		supabase
 			.from('deputes')
-			.select('id, nom, circonscription, email, parti, fonction, role, sexe')
+			.select('id, nom, circonscription, email, parti, sexe')
 			.eq('actif', true)
 			.eq('role', 'depute')
 			.order('nom', { ascending: true }),

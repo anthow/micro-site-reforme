@@ -44,8 +44,6 @@ export function buildMailLinks(options: {
 	};
 }
 
-export type DestinataireRole = 'depute' | 'ministre';
-
 const PARTI_ORDRE = ['mr', 'les engages', 'ps', 'ptb', 'ecolo'];
 const PARTIS_MAJORITE = new Set(['mr', 'les engages']);
 
@@ -77,29 +75,6 @@ export function compareDestinatairesParPartiPuisNom<T extends { nom: string; par
 
 export function sortByPartiPuisNom<T extends { nom: string; parti: string | null }>(items: T[]): T[] {
 	return [...items].sort(compareDestinatairesParPartiPuisNom);
-}
-
-export function destinataireDetail(options: {
-	role: DestinataireRole;
-	circonscription: string | null;
-	fonction: string | null;
-	parti: string | null;
-}): string {
-	const lieuOuFonction =
-		options.role === 'ministre' ? options.fonction?.trim() : options.circonscription?.trim();
-	const parts = [lieuOuFonction, options.parti?.trim()].filter(Boolean);
-	return parts.join(' · ');
-}
-
-export function destinataireLabel(options: {
-	nom: string;
-	role: DestinataireRole;
-	circonscription: string | null;
-	fonction: string | null;
-	parti: string | null;
-}): string {
-	const detail = destinataireDetail(options);
-	return detail ? `${options.nom} — ${detail}` : options.nom;
 }
 
 export function destinataireLabelDansCirconscription(options: {

@@ -36,3 +36,23 @@ export interface Depute {
 }
 
 export type BoutonClic = 'mailto' | 'gmail' | 'outlook' | 'copier';
+
+export type AvisInitiativeType =
+	| 'titre'
+	| 'soustitre'
+	| 'date'
+	| 'description'
+	| 'h2'
+	| 'h3'
+	| 'kicker'
+	| 'p'
+	| 'li'
+	| 'note';
+
+export interface AvisInitiativeBloc {
+	id: number;
+	ordre: number;
+	type: AvisInitiativeType;
+	texte: string;
+	ancre: string | null;
+}
