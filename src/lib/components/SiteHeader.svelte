@@ -10,9 +10,13 @@
 </script>
 
 <header class="sticky top-0 z-50 border-b border-ink-light/10 bg-page-light/95 backdrop-blur-sm">
-	<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-		<a href="/" class="shrink-0 font-heading text-lg font-bold tracking-tight text-accent sm:text-xl">
-			Laissez-nous travailler !
+	<div
+		class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-4"
+	>
+		<a href="/" class="min-w-0 font-heading leading-tight tracking-tight">
+			<span class="block text-sm font-semibold text-ink-light">(Ré)former sans exclure</span>
+			<span class="block text-sm font-semibold text-ink-light">Ecoutez le terrain !</span>
+			<span class="block text-lg font-bold text-accent sm:text-xl">Laissez-nous travailler !</span>
 		</a>
 		<nav
 			class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 sm:gap-x-6"
