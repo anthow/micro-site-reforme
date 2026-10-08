@@ -13,7 +13,7 @@
 	<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
 		<a
 			href="/"
-			class="flex min-w-0 items-baseline gap-x-1.5 font-heading text-[11px] font-bold leading-none tracking-tighter text-accent sm:text-xs"
+			class="flex min-w-0 items-baseline gap-x-2 font-heading text-sm font-bold leading-none tracking-tighter text-accent sm:text-base"
 		>
 			<span class="whitespace-nowrap">(Ré)former sans exclure</span>
 			<span class="whitespace-nowrap">Ecoutez le terrain !</span>
