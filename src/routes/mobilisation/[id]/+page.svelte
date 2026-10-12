@@ -38,20 +38,29 @@
 		</p>
 	{:else}
 		<h1
-			class="mb-8 font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl"
+			class="font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl {article.publication
+				? ''
+				: 'mb-8'}"
 		>
 			{article.titre}
 		</h1>
+		{#if article.publication}
+			<p class="mb-8 mt-2 font-heading text-base font-semibold tracking-tight text-accent">
+				<time datetime={article.publication.iso}>{article.publication.label}</time>
+			</p>
+		{/if}
 
-		<div class="overflow-hidden rounded-lg border border-ink-light/10 dark:border-ink-dark/10">
-			<MobilisationMedia
-				titre={article.titre}
-				imageAlt=""
-				imageUrl={article.imageUrl}
-				videoEmbed={article.videoEmbed}
-				eager
-			/>
-		</div>
+		{#if article.imageUrl || article.videoEmbed}
+			<div class="overflow-hidden rounded-lg border border-ink-light/10 dark:border-ink-dark/10">
+				<MobilisationMedia
+					titre={article.titre}
+					imageAlt=""
+					imageUrl={article.imageUrl}
+					videoEmbed={article.videoEmbed}
+					eager
+				/>
+			</div>
+		{/if}
 
 		{#if article.texteHtml && article.texte}
 			<div

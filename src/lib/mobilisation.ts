@@ -1,4 +1,4 @@
-import { safeResourceUrl } from './safeUrl.ts';
+import { safeHref, safeResourceUrl } from './safeUrl.ts';
 import { sanitizeArticleHtml } from './sanitizeRichText.ts';
 import type { MobilisationArticle } from './types';
 
@@ -13,8 +13,11 @@ export interface MobilisationRow {
 	texte?: string | null;
 	image_url: string | null;
 	video_url: string | null;
+	lien?: string | null;
+	abonnement?: boolean | null;
 	epingle: boolean | null;
 	publie: boolean | null;
+	Date?: string | null;
 }
 
 export function articleSlug(titre: string): string {
@@ -60,6 +63,29 @@ export function splitParagraphs(text: string | null | undefined): string[] {
 function timestamp(value: string): number {
 	const parsed = Date.parse(value);
 	return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+export function formatPublicationDate(
+	value: string | null | undefined
+): { iso: string; label: string } | null {
+	if (!value) return null;
+	const iso = value.slice(0, 10);
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+
+	const [year, month, day] = iso.split('-').map(Number);
+	const date = new Date(year, month - 1, day);
+	if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+		return null;
+	}
+
+	return {
+		iso,
+		label: new Intl.DateTimeFormat('fr-BE', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		}).format(date)
+	};
 }
 
 export function sortMobilisation<T extends { epingle: boolean; created_at: string }>(
@@ -112,8 +138,11 @@ export function presentMobilisation(row: MobilisationRow): MobilisationArticle |
 		resume: row.resume?.trim() || null,
 		texte: rawTexte == null ? null : texteHtml ? sanitizeArticleHtml(rawTexte) : rawTexte,
 		texteHtml,
+		publication: formatPublicationDate(row.Date),
 		imageUrl: safeResourceUrl(row.image_url),
 		videoEmbed: facebookReelEmbed(row.video_url),
+		lien: row.lien ? safeHref(row.lien) : null,
+		abonnement: row.abonnement === true,
 		epingle: row.epingle === true
 	};
 }

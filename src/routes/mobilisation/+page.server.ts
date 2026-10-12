@@ -6,7 +6,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async () => {
 	const result = await supabase
 		.from('Mobilisation')
-		.select('id, created_at, titre, resume, image_url, video_url, epingle, publie')
+		.select('id, created_at, titre, resume, image_url, video_url, lien, abonnement, epingle, publie, "Date"')
 		.eq('publie', true)
 		.order('created_at', { ascending: false });
 

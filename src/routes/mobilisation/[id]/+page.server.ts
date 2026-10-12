@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const result = await supabase
 		.from('Mobilisation')
-		.select('id, created_at, titre, resume, texte, image_url, video_url, epingle, publie')
+		.select('id, created_at, titre, resume, texte, image_url, video_url, lien, abonnement, epingle, publie, "Date"')
 		.eq('id', id)
 		.eq('publie', true)
 		.maybeSingle();
@@ -24,6 +24,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const article = result.data ? presentMobilisation(result.data as MobilisationRow) : null;
 	if (!article) error(404, 'Article introuvable');
+	if (article.lien) redirect(302, article.lien);
 
 	const canonical = articlePath(article.id, article.titre);
 	if (`/mobilisation/${params.id}` !== canonical) redirect(301, canonical);

@@ -30,8 +30,11 @@ export interface MobilisationArticle {
 	resume: string | null;
 	texte: string | null;
 	texteHtml: boolean;
+	publication: { iso: string; label: string } | null;
 	imageUrl: string | null;
 	videoEmbed: string | null;
+	lien: string | null;
+	abonnement: boolean;
 	epingle: boolean;
 }
 

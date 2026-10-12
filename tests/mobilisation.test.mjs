@@ -5,6 +5,7 @@ import {
 	articlePath,
 	articleSlug,
 	facebookReelEmbed,
+	formatPublicationDate,
 	presentMobilisation,
 	presentMobilisationList,
 	sortMobilisation,
@@ -69,6 +70,8 @@ describe('presentMobilisationList', () => {
 		assert.equal(articles[0].titre, 'Publié');
 		assert.equal(articles[0].resume, 'Résumé');
 		assert.equal(articles[0].imageUrl, null);
+		assert.equal(articles[0].lien, null);
+		assert.equal(articles[0].abonnement, false);
 		assert.match(articles[0].videoEmbed ?? '', /facebook\.com\/plugins\/video\.php/);
 		assert.match(articles[0].videoEmbed ?? '', /width=267/);
 	});
@@ -122,6 +125,67 @@ describe('présent HTML', () => {
 		assert.match(article?.texte ?? '', /<ul><li><strong>Accès<\/strong>/);
 		assert.match(article?.texte ?? '', /href="https:\/\/www.interfede.be\/note.pdf"/);
 		assert.doesNotMatch(article?.texte ?? '', /script|onclick|target|class=/);
+	});
+});
+
+describe('lien externe', () => {
+	const base = {
+		id: 20,
+		created_at: '2026-10-12T00:00:00.000Z',
+		titre: 'Article de presse',
+		resume: null,
+		texte: null,
+		image_url: null,
+		video_url: null,
+		epingle: false,
+		publie: true
+	};
+
+	it('garde une adresse https et signale l’abonnement', () => {
+		const article = presentMobilisation({
+			...base,
+			lien: ' https://www.exemple.be/article ',
+			abonnement: true
+		});
+
+		assert.equal(article?.lien, 'https://www.exemple.be/article');
+		assert.equal(article?.abonnement, true);
+	});
+
+	it('ignore une adresse dangereuse', () => {
+		const article = presentMobilisation({
+			...base,
+			lien: 'javascript:alert(1)',
+			abonnement: false
+		});
+
+		assert.equal(article?.lien, null);
+		assert.equal(article?.abonnement, false);
+	});
+});
+
+describe('formatPublicationDate', () => {
+	it('affiche la date de publication en français', () => {
+		assert.deepEqual(formatPublicationDate('2026-09-18'), {
+			iso: '2026-09-18',
+			label: '18 septembre 2026'
+		});
+		assert.equal(formatPublicationDate(null), null);
+		assert.equal(formatPublicationDate('pas-une-date'), null);
+
+		const article = presentMobilisation({
+			id: 14,
+			created_at: '2026-10-12T00:00:00.000Z',
+			titre: 'Recours',
+			resume: null,
+			texte: null,
+			image_url: null,
+			video_url: null,
+			epingle: false,
+			publie: true,
+			Date: '2026-09-18'
+		});
+		assert.equal(article?.publication?.label, '18 septembre 2026');
 	});
 });
 

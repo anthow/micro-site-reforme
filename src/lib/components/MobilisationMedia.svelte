@@ -4,11 +4,12 @@
 		imageUrl: string | null;
 		videoEmbed: string | null;
 		href?: string | null;
+		external?: boolean;
 		eager?: boolean;
 		imageAlt?: string;
 	}
 
-	let { titre, imageUrl, videoEmbed, href = null, eager = false, imageAlt }: Props = $props();
+	let { titre, imageUrl, videoEmbed, href = null, external = false, eager = false, imageAlt }: Props = $props();
 	const alt = $derived(imageAlt ?? titre);
 </script>
 
@@ -29,11 +30,16 @@
 	</div>
 {:else if imageUrl}
 	{#if href}
-		<a {href} class="block bg-ink-light/[0.03] dark:bg-ink-dark/[0.04]">
+		<a
+			{href}
+			class="flex justify-center"
+			target={external ? '_blank' : undefined}
+			rel={external ? 'noopener noreferrer' : undefined}
+		>
 			<img
 				src={imageUrl}
 				alt={alt}
-				class="mx-auto block max-h-[36rem] w-full object-contain"
+				class="block h-auto max-h-60 w-auto max-w-full object-contain"
 				loading={eager ? 'eager' : 'lazy'}
 			/>
 		</a>
@@ -47,9 +53,4 @@
 			/>
 		</div>
 	{/if}
-{:else}
-	<div
-		class="aspect-[16/9] bg-ink-light/[0.04] dark:bg-ink-dark/[0.06]"
-		aria-hidden="true"
-	></div>
 {/if}
