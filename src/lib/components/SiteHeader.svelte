@@ -67,7 +67,7 @@
 				class={itemClass(temoignageActive)}
 				aria-current={temoignageActive ? 'location' : undefined}
 			>
-				Témoignage secteur
+				Témoignages secteur
 			</a>
 		</nav>
 	</div>
