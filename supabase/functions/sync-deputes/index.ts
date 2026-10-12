@@ -12,6 +12,10 @@
  *                        tables politiques). L'anon key ne suffit généralement pas
  *                        si le RLS du source n'a pas de politique de lecture.
  *
+ * L'appel est autorisé seulement si l'en-tête x-sync-secret correspond au secret
+ * Vault cron_sync_deputes_secret (vérifié par public.sync_autorise). La clé anon
+ * ne suffit pas.
+ *
  * Ces secrets ne doivent JAMAIS être exposés au navigateur.
  *
  * Tables lues côté source (constantes ci-dessous, faciles à adapter) :
@@ -21,7 +25,7 @@
  * -----------------------------------------------------------------------------
  * CONFIGURATION — fréquence du cron
  * -----------------------------------------------------------------------------
- * Voir `supabase/migrations/20260819100001_schedule_sync_deputes_cron.sql`
+ * Voir `supabase/migrations/20261012061002_secure_public_access.sql`
  * (job `sync-deputes-daily`, actuellement `0 5 * * *` = tous les jours à 05:00 UTC).
  *
  * Les personnes absentes du source sont marquées `actif = false` (jamais supprimées).
@@ -75,6 +79,11 @@ function jsonResponse(body: unknown, status = 200) {
 		status,
 		headers: { 'Content-Type': 'application/json' }
 	});
+}
+
+function fail(status: number, message: string, detail?: string) {
+	if (detail) console.error(message, detail);
+	return jsonResponse({ error: message }, status);
 }
 
 function asSingleIndividu(value: IndividuPolitiqueRow['individu']): IndividuEmbed | null {
@@ -139,24 +148,22 @@ function displayName(prenom: string | null, nom: string | null): string | null {
 	return parts.length > 0 ? parts.join(' ') : null;
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req: Request) => {
+	if (req.method !== 'POST') {
+		return fail(405, 'Méthode non autorisée');
+	}
+
 	const sourceUrl = Deno.env.get('SOURCE_SUPABASE_URL');
 	const sourceKey = Deno.env.get('SOURCE_SUPABASE_KEY');
 	const siteUrl = Deno.env.get('SUPABASE_URL');
 	const siteServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 	if (!sourceUrl || !sourceKey) {
-		return jsonResponse(
-			{
-				error:
-					'Secrets SOURCE_SUPABASE_URL et SOURCE_SUPABASE_KEY manquants. Les configurer dans Dashboard > Edge Functions > Secrets.'
-			},
-			500
-		);
+		return fail(500, 'Synchronisation impossible', 'Secrets SOURCE_SUPABASE_URL ou SOURCE_SUPABASE_KEY manquants');
 	}
 
 	if (!siteUrl || !siteServiceKey) {
-		return jsonResponse({ error: 'Secrets internes SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY manquants.' }, 500);
+		return fail(500, 'Synchronisation impossible', 'Secrets internes SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY manquants');
 	}
 
 	const source = createClient(sourceUrl, sourceKey, {
@@ -166,6 +173,15 @@ Deno.serve(async () => {
 		auth: { persistSession: false, autoRefreshToken: false }
 	});
 
+	const providedSecret = req.headers.get('x-sync-secret') ?? '';
+	const { data: allowed, error: authError } = await site.rpc('sync_autorise', {
+		p_secret: providedSecret
+	});
+	if (authError || allowed !== true) {
+		console.error('Secret de synchro refusé');
+		return jsonResponse({ error: 'Non autorisé' }, 401);
+	}
+
 	const { data: politiques, error: politiquesError } = await source
 		.from(SOURCE_TABLE_POLITIQUE)
 		.select(
@@ -174,10 +190,7 @@ Deno.serve(async () => {
 		.limit(1000);
 
 	if (politiquesError) {
-		return jsonResponse(
-			{ error: 'Lecture du projet source (individu_politique) impossible', details: politiquesError.message },
-			502
-		);
+		return fail(502, 'Synchronisation impossible', politiquesError.message);
 	}
 
 	const { data: staging, error: stagingError } = await source
@@ -186,10 +199,7 @@ Deno.serve(async () => {
 		.limit(1000);
 
 	if (stagingError) {
-		return jsonResponse(
-			{ error: 'Lecture du projet source (staging_dato_politique) impossible', details: stagingError.message },
-			502
-		);
+		return fail(502, 'Synchronisation impossible', stagingError.message);
 	}
 
 	const mailByDatoId = new Map<string, string>();
@@ -244,23 +254,17 @@ Deno.serve(async () => {
 	}
 
 	if (rows.length === 0) {
-		return jsonResponse(
-			{
-				error:
-					'Aucun député ou ministre valide dans le projet source. Aucune désactivation n’a été effectuée.'
-			},
-			502
-		);
+		return fail(502, 'Synchronisation impossible', 'Aucun député ou ministre valide. Aucune désactivation.');
 	}
 
 	const { error: upsertError } = await site.from('deputes').upsert(rows, { onConflict: 'email' });
 	if (upsertError) {
-		return jsonResponse({ error: 'Upsert des députés impossible', details: upsertError.message }, 500);
+		return fail(500, 'Synchronisation impossible', upsertError.message);
 	}
 
 	const { data: existing, error: existingError } = await site.from('deputes').select('id, email');
 	if (existingError) {
-		return jsonResponse({ error: 'Lecture des députés locaux impossible', details: existingError.message }, 500);
+		return fail(500, 'Synchronisation impossible', existingError.message);
 	}
 
 	const goneIds = (existing ?? [])
@@ -270,10 +274,7 @@ Deno.serve(async () => {
 	if (goneIds.length > 0) {
 		const { error: deactivateError } = await site.from('deputes').update({ actif: false }).in('id', goneIds);
 		if (deactivateError) {
-			return jsonResponse(
-				{ error: 'Désactivation des destinataires absents impossible', details: deactivateError.message },
-				500
-			);
+			return fail(500, 'Synchronisation impossible', deactivateError.message);
 		}
 	}
 

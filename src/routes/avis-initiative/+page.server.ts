@@ -1,3 +1,4 @@
+import { loadProblem, sanitizeAvis, sanitizeLogos } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { AvisInitiativeBloc, LogoFede } from '$lib/types';
 import type { PageServerLoad } from './$types';
@@ -12,11 +13,11 @@ export const load: PageServerLoad = async () => {
 	]);
 
 	return {
-		blocs: (avisResult.data ?? []) as AvisInitiativeBloc[],
-		logos: (logosResult.data ?? []) as LogoFede[],
+		blocs: sanitizeAvis((avisResult.data ?? []) as AvisInitiativeBloc[]),
+		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		errors: {
-			avis: avisResult.error?.message ?? null,
-			logos: logosResult.error?.message ?? null
+			avis: loadProblem(avisResult.error),
+			logos: loadProblem(logosResult.error)
 		}
 	};
 };

@@ -1,6 +1,7 @@
 import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 import { estPartiMajorite } from '$lib/campagneMail';
+import { loadProblem, sanitizeLogos } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { Depute, LogoFede } from '$lib/types';
 import type { PageServerLoad } from './$types';
@@ -27,11 +28,11 @@ export const load: PageServerLoad = async () => {
 
 	return {
 		deputes,
-		logos: (logosResult.data ?? []) as LogoFede[],
+		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		campagneEmail,
 		errors: {
-			deputes: deputesResult.error?.message ?? null,
-			logos: logosResult.error?.message ?? null
+			deputes: loadProblem(deputesResult.error),
+			logos: loadProblem(logosResult.error)
 		}
 	};
 };

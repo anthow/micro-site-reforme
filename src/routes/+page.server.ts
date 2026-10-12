@@ -1,4 +1,5 @@
 import { filterPlayableFacebookVideos } from '$lib/facebookVideo';
+import { loadProblem, sanitizeHomepage, sanitizeLogos, sanitizeVideos } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { FaqEntry, Homepage, LogoFede, Video } from '$lib/types';
 import type { PageServerLoad } from './$types';
@@ -15,22 +16,22 @@ export const load: PageServerLoad = async () => {
 		supabase.from('videos').select('id, url').order('id', { ascending: true })
 	]);
 
-	const fetchedVideos = (videosResult.data ?? []) as Video[];
+	const fetchedVideos = sanitizeVideos((videosResult.data ?? []) as { id: number; url: string | null }[]);
 	const playableVideos = videosResult.error
 		? fetchedVideos
 		: await filterPlayableFacebookVideos(fetchedVideos);
 	const videos = moveVideoToPosition(playableVideos, 2, 5);
 
 	return {
-		homepage: homepageResult.data as Homepage | null,
+		homepage: sanitizeHomepage(homepageResult.data as Homepage | null),
 		faq: (faqResult.data ?? []) as unknown as FaqEntry[],
-		logos: (logosResult.data ?? []) as LogoFede[],
+		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		videos,
 		errors: {
-			homepage: homepageResult.error?.message ?? null,
-			faq: faqResult.error?.message ?? null,
-			logos: logosResult.error?.message ?? null,
-			videos: videosResult.error?.message ?? null
+			homepage: loadProblem(homepageResult.error),
+			faq: loadProblem(faqResult.error),
+			logos: loadProblem(logosResult.error),
+			videos: loadProblem(videosResult.error)
 		}
 	};
 };

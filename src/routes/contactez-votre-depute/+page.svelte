@@ -8,7 +8,6 @@
 		listCirconscriptions,
 		sortByPartiPuisNom
 	} from '$lib/campagneMail';
-	import { supabase } from '$lib/supabaseClient';
 	import type { BoutonClic, Depute } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -71,14 +70,14 @@
 		return id === 1 ? 'h-16 w-auto object-contain sm:h-[4.5rem]' : 'h-12 w-auto object-contain';
 	}
 
-	async function track(bouton: BoutonClic, depute: Depute) {
-		const { error } = await supabase.from('evenements_clics').insert({
-			bouton_clique: bouton,
-			depute_id: depute.id
+	function track(bouton: BoutonClic, depute: Depute) {
+		void fetch('/contactez-votre-depute/clic', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ bouton, deputeId: depute.id })
+		}).catch(() => {
+			console.error('Suivi du clic impossible');
 		});
-		if (error) {
-			console.error('Suivi du clic impossible', error.message);
-		}
 	}
 
 	function onSendClick(event: MouseEvent, bouton: BoutonClic) {
