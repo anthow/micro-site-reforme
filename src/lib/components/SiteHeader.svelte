@@ -29,13 +29,9 @@
 			href="/"
 			class="flex max-w-full flex-wrap items-baseline font-heading text-sm font-bold leading-tight tracking-tighter text-accent sm:text-base"
 		>
-			<span class="whitespace-nowrap"
-				>(Ré)former sans exclure<span class="px-2" aria-hidden="true">|</span></span
-			>
-			<span class="whitespace-nowrap"
-				>Écoutez le terrain !<span class="px-2" aria-hidden="true">|</span></span
-			>
-			<span class="whitespace-nowrap">Laissez-nous travailler !</span>
+			<span class="whitespace-nowrap">(Ré)former sans exclure <span aria-hidden="true">|</span></span>
+			<span class="whitespace-nowrap">&nbsp;Écoutez le terrain ! <span aria-hidden="true">|</span></span>
+			<span class="whitespace-nowrap">&nbsp;Laissez-nous travailler !</span>
 		</a>
 		<nav
 			class="flex max-w-full flex-wrap items-center justify-end gap-x-4 gap-y-1 sm:gap-x-6"

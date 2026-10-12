@@ -1,12 +1,12 @@
-import { error } from '@sveltejs/kit';
-import { presentMobilisation, type MobilisationRow } from '$lib/mobilisation';
+import { error, redirect } from '@sveltejs/kit';
+import { articleIdFromParam, articlePath, presentMobilisation, type MobilisationRow } from '$lib/mobilisation';
 import { loadProblem } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const id = Number(params.id);
-	if (!Number.isInteger(id) || id < 1) error(404, 'Article introuvable');
+	const id = articleIdFromParam(params.id);
+	if (id == null) error(404, 'Article introuvable');
 
 	const result = await supabase
 		.from('Mobilisation')
@@ -24,6 +24,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const article = result.data ? presentMobilisation(result.data as MobilisationRow) : null;
 	if (!article) error(404, 'Article introuvable');
+
+	const canonical = articlePath(article.id, article.titre);
+	if (`/mobilisation/${params.id}` !== canonical) redirect(301, canonical);
 
 	return { article, loadError: null };
 };

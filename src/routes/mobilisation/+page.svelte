@@ -1,6 +1,7 @@
 <script lang="ts">
 	import MobilisationMedia from '$lib/components/MobilisationMedia.svelte';
 	import Seo from '$lib/components/Seo.svelte';
+	import { articlePath } from '$lib/mobilisation';
 	import { siteTitle } from '$lib/seo/identity';
 	import type { PageData } from './$types';
 
@@ -43,7 +44,7 @@
 						titre={article.titre}
 						imageUrl={article.imageUrl}
 						videoEmbed={article.videoEmbed}
-						href={article.videoEmbed ? null : `/mobilisation/${article.id}`}
+						href={article.videoEmbed ? null : articlePath(article.id, article.titre)}
 					/>
 					<div class="px-5 py-5 sm:px-6">
 						{#if article.epingle}
@@ -56,7 +57,7 @@
 							</p>
 						{/if}
 						<h2 class="font-heading text-2xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark">
-							<a href={`/mobilisation/${article.id}`} class="transition-colors hover:text-accent">
+							<a href={articlePath(article.id, article.titre)} class="transition-colors hover:text-accent">
 								{article.titre}
 							</a>
 						</h2>

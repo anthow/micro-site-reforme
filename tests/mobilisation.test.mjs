@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+	articleIdFromParam,
+	articlePath,
+	articleSlug,
 	facebookReelEmbed,
+	presentMobilisation,
 	presentMobilisationList,
 	sortMobilisation,
 	splitParagraphs
@@ -74,6 +78,50 @@ describe('facebookReelEmbed', () => {
 	it('refuse une adresse qui n’est pas une vidéo Facebook', () => {
 		assert.equal(facebookReelEmbed('https://exemple.org/video'), null);
 		assert.equal(facebookReelEmbed('javascript:alert(1)'), null);
+	});
+});
+
+describe('articleSlug', () => {
+	const titre =
+		'Suppression d’un incitant financier essentiel à la formation : les CISP et le RWLP introduisent un recours';
+
+	it('met le titre dans l’adresse et coupe sur un mot si c’est trop long', () => {
+		const slug = articleSlug(titre);
+		assert.ok(slug.length <= 80);
+		assert.equal(slug.endsWith('-'), false);
+		assert.match(slug, /^suppression-d-un-incitant-financier/);
+		assert.equal(articlePath(14, titre), `/mobilisation/14-${slug}`);
+	});
+
+	it('retrouve l’identifiant avec ou sans le titre', () => {
+		assert.equal(articleIdFromParam('14'), 14);
+		assert.equal(articleIdFromParam(`14-${articleSlug(titre)}`), 14);
+		assert.equal(articleIdFromParam('abc'), null);
+		assert.equal(articleIdFromParam('0-titre'), null);
+	});
+});
+
+describe('présent HTML', () => {
+	it('interprète les balises autorisées et retire le code dangereux', () => {
+		const article = presentMobilisation({
+			id: 14,
+			created_at: '2026-10-12T00:00:00.000Z',
+			titre: 'Recours',
+			resume: null,
+			texte:
+				'<article><h2>Titre</h2><p class="date"><time datetime="2026-09-18">18 septembre 2026</time></p><ul><li><strong>Accès</strong> restreint</li></ul><p class="source">Source : <a href="https://www.interfede.be/note.pdf" target="_blank" onclick="alert(1)">PDF</a></p><script>alert(1)</script></article>',
+			image_url: null,
+			video_url: null,
+			epingle: false,
+			publie: true
+		});
+
+		assert.equal(article?.texteHtml, true);
+		assert.match(article?.texte ?? '', /<h2>Titre<\/h2>/);
+		assert.match(article?.texte ?? '', /<time datetime="2026-09-18">/);
+		assert.match(article?.texte ?? '', /<ul><li><strong>Accès<\/strong>/);
+		assert.match(article?.texte ?? '', /href="https:\/\/www.interfede.be\/note.pdf"/);
+		assert.doesNotMatch(article?.texte ?? '', /script|onclick|target|class=/);
 	});
 });
 

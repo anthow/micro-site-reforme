@@ -46,13 +46,20 @@
 		<div class="overflow-hidden rounded-lg border border-ink-light/10 dark:border-ink-dark/10">
 			<MobilisationMedia
 				titre={article.titre}
+				imageAlt=""
 				imageUrl={article.imageUrl}
 				videoEmbed={article.videoEmbed}
 				eager
 			/>
 		</div>
 
-		{#if paragraphs.length > 0}
+		{#if article.texteHtml && article.texte}
+			<div
+				class="mt-8 font-heading text-base font-medium leading-relaxed text-ink-light/90 dark:text-ink-dark/90 [&_a]:text-accent [&_a]:underline [&_a]:decoration-accent/40 [&_a]:underline-offset-2 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:tracking-tight [&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:tracking-tight [&_li]:mb-2 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_strong]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
+			>
+				{@html article.texte}
+			</div>
+		{:else if paragraphs.length > 0}
 			<div class="mt-8">
 				{#each paragraphs as paragraph}
 					<p

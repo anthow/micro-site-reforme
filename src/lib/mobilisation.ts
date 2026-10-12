@@ -1,7 +1,9 @@
 import { safeResourceUrl } from './safeUrl.ts';
+import { sanitizeArticleHtml } from './sanitizeRichText.ts';
 import type { MobilisationArticle } from './types';
 
 const REEL_WIDTH = '267';
+const SLUG_MAX = 80;
 
 export interface MobilisationRow {
 	id: number | string;
@@ -13,6 +15,38 @@ export interface MobilisationRow {
 	video_url: string | null;
 	epingle: boolean | null;
 	publie: boolean | null;
+}
+
+export function articleSlug(titre: string): string {
+	const folded = titre
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.replace(/['’ʼ]/g, '-')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+	if (folded.length <= SLUG_MAX) return folded;
+
+	const cut = folded.slice(0, SLUG_MAX);
+	const hyphen = cut.lastIndexOf('-');
+	return (hyphen > 24 ? cut.slice(0, hyphen) : cut).replace(/-+$/g, '');
+}
+
+export function articlePath(id: number, titre: string): string {
+	const slug = articleSlug(titre);
+	return slug ? `/mobilisation/${id}-${slug}` : `/mobilisation/${id}`;
+}
+
+export function articleIdFromParam(param: string): number | null {
+	const match = /^(\d+)(?:-|$)/.exec(param);
+	if (!match) return null;
+	const id = Number(match[1]);
+	if (!Number.isInteger(id) || id < 1) return null;
+	return id;
+}
+
+function looksLikeHtml(value: string): boolean {
+	return /<\/?[a-z]/i.test(value);
 }
 
 export function splitParagraphs(text: string | null | undefined): string[] {
@@ -68,12 +102,16 @@ export function presentMobilisation(row: MobilisationRow): MobilisationArticle |
 	const id = typeof row.id === 'string' ? Number(row.id) : row.id;
 	if (!row.publie || !titre || !Number.isInteger(id) || id < 1) return null;
 
+	const rawTexte = row.texte?.trim() || null;
+	const texteHtml = rawTexte != null && looksLikeHtml(rawTexte);
+
 	return {
 		id,
 		created_at: row.created_at,
 		titre,
 		resume: row.resume?.trim() || null,
-		texte: row.texte?.trim() || null,
+		texte: rawTexte == null ? null : texteHtml ? sanitizeArticleHtml(rawTexte) : rawTexte,
+		texteHtml,
 		imageUrl: safeResourceUrl(row.image_url),
 		videoEmbed: facebookReelEmbed(row.video_url),
 		epingle: row.epingle === true

@@ -5,9 +5,11 @@
 		videoEmbed: string | null;
 		href?: string | null;
 		eager?: boolean;
+		imageAlt?: string;
 	}
 
-	let { titre, imageUrl, videoEmbed, href = null, eager = false }: Props = $props();
+	let { titre, imageUrl, videoEmbed, href = null, eager = false, imageAlt }: Props = $props();
+	const alt = $derived(imageAlt ?? titre);
 </script>
 
 {#if videoEmbed}
@@ -30,7 +32,7 @@
 		<a {href} class="block bg-ink-light/[0.03] dark:bg-ink-dark/[0.04]">
 			<img
 				src={imageUrl}
-				alt={titre}
+				alt={alt}
 				class="mx-auto block max-h-[36rem] w-full object-contain"
 				loading={eager ? 'eager' : 'lazy'}
 			/>
@@ -39,7 +41,7 @@
 		<div class="bg-ink-light/[0.03] dark:bg-ink-dark/[0.04]">
 			<img
 				src={imageUrl}
-				alt={titre}
+				alt={alt}
 				class="mx-auto block max-h-[40rem] w-full object-contain"
 				loading={eager ? 'eager' : 'lazy'}
 			/>

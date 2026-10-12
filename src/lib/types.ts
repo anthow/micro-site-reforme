@@ -29,6 +29,7 @@ export interface MobilisationArticle {
 	titre: string;
 	resume: string | null;
 	texte: string | null;
+	texteHtml: boolean;
 	imageUrl: string | null;
 	videoEmbed: string | null;
 	epingle: boolean;
