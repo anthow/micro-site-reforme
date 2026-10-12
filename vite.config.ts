@@ -1,10 +1,15 @@
 import adapter from '@sveltejs/adapter-netlify';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { cspDirectives } from './src/lib/securityHeaders';
 
 export default defineConfig({
 	plugins: [
 		sveltekit({
+			csp: {
+				mode: 'auto',
+				directives: cspDirectives()
+			},
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>

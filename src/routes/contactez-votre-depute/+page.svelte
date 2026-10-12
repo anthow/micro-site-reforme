@@ -9,9 +9,9 @@
 		sortByPartiPuisNom
 	} from '$lib/campagneMail';
 	import type { BoutonClic, Depute } from '$lib/types';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const deputes = $derived(data.deputes);
 	const logos = $derived(data.logos ?? []);
@@ -173,6 +173,35 @@
 			</div>
 		</section>
 
+		{#if data.locked}
+			<section class="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+				<form method="POST" class="mx-auto flex max-w-md flex-col gap-4">
+					<label class="block">
+						<span class="mb-2 block font-heading text-sm font-semibold tracking-tight">
+							Mot de passe
+						</span>
+						<input
+							class="w-full rounded-lg border border-ink-light/15 bg-white px-3 py-3 font-heading text-base tracking-tight text-ink-light outline-none transition-colors focus:border-accent dark:border-ink-dark/20 dark:bg-[#1A1A1A] dark:text-ink-dark"
+							type="password"
+							name="motDePasse"
+							autocomplete="current-password"
+							required
+						/>
+					</label>
+					{#if form?.refus}
+						<p class="font-heading text-sm font-medium text-accent" role="alert">
+							Mot de passe incorrect.
+						</p>
+					{/if}
+					<button
+						type="submit"
+						class="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-3 font-heading text-sm font-semibold tracking-tight text-white transition-opacity hover:opacity-90"
+					>
+						Entrer
+					</button>
+				</form>
+			</section>
+		{:else}
 		<section class="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
 			{#if data.errors.deputes}
 				<p
@@ -346,6 +375,7 @@
 				</p>
 			</div>
 		</section>
+		{/if}
 	</main>
 
 	<footer class="border-t border-ink-light/10 bg-white">

@@ -1,3 +1,0 @@
-# allow crawling everything by default, except the unlisted advocacy page
-User-agent: *
-Disallow: /contactez-votre-depute

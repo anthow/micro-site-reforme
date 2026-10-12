@@ -1,7 +1,9 @@
 <script lang="ts">
 	import FaqItem from '$lib/components/FaqItem.svelte';
 	import IndustryTestimonials from '$lib/components/IndustryTestimonials.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import SiteHeader from '$lib/components/SiteHeader.svelte';
+	import { siteTitle } from '$lib/seo/identity';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -12,7 +14,6 @@
 	const videos = $derived((data.videos ?? []).filter((video) => Boolean(video.url)));
 	const errors = $derived(data.errors);
 
-	const siteName = $derived(homepage?.Titre ?? 'Mobilisation sectorielle');
 	const introParagraphs = $derived(
 		homepage?.Texte
 			? homepage.Texte
@@ -28,10 +29,12 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{siteName}</title>
-	<meta name="description" content={homepage?.Soustitre ?? ''} />
-</svelte:head>
+<Seo
+	title={siteTitle}
+	description={homepage?.Soustitre ?? ''}
+	indexable={data.seo.indexable}
+	siteUrl={data.seo.siteUrl}
+/>
 
 <div class="flex min-h-screen flex-col">
 	<SiteHeader />

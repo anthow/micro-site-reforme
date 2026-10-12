@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { env } from '$env/dynamic/private';
+import { DEPUTE_ACCESS_COOKIE } from '$lib/deputeAccess';
+import { deputeAccessGranted } from '$lib/deputeAccess.server';
 import { supabase } from '$lib/supabaseClient';
 import type { BoutonClic } from '$lib/types';
 import type { RequestHandler } from './$types';
@@ -10,7 +12,11 @@ function hashIp(ip: string, salt: string): string {
 	return createHash('sha256').update(`${salt}\n${ip}`).digest('hex');
 }
 
-export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+export const POST: RequestHandler = async ({ request, getClientAddress, cookies }) => {
+	if (!deputeAccessGranted(cookies.get(DEPUTE_ACCESS_COOKIE))) {
+		return new Response(null, { status: 401 });
+	}
+
 	let body: unknown;
 	try {
 		body = await request.json();

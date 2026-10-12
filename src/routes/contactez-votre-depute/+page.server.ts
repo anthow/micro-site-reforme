@@ -1,14 +1,33 @@
+import { dev } from '$app/environment';
 import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 import { estPartiMajorite } from '$lib/campagneMail';
+import {
+	DEPUTE_ACCESS_COOKIE,
+	DEPUTE_ACCESS_TTL_MS,
+	issueAccessToken,
+	passwordsMatch
+} from '$lib/deputeAccess';
+import { deputeAccessGranted, deputePagePassword } from '$lib/deputeAccess.server';
 import { loadProblem, sanitizeLogos } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { Depute, LogoFede } from '$lib/types';
-import type { PageServerLoad } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async () => {
+const locked = {
+	locked: true,
+	deputes: [] as Depute[],
+	logos: [] as LogoFede[],
+	campagneEmail: null,
+	errors: { deputes: null, logos: null }
+};
+
+export const load: PageServerLoad = async ({ cookies }) => {
+	if (!deputeAccessGranted(cookies.get(DEPUTE_ACCESS_COOKIE))) return locked;
+
 	const [deputesResult, logosResult] = await Promise.all([
 		supabase
 			.from('deputes')
@@ -27,6 +46,7 @@ export const load: PageServerLoad = async () => {
 	);
 
 	return {
+		locked: false,
 		deputes,
 		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		campagneEmail,
@@ -35,4 +55,25 @@ export const load: PageServerLoad = async () => {
 			logos: loadProblem(logosResult.error)
 		}
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ request, cookies }) => {
+		const password = deputePagePassword();
+		const submitted = String((await request.formData()).get('motDePasse') ?? '');
+		if (!password || !passwordsMatch(submitted, password)) {
+			if (!password) console.error('DEPUTE_PAGE_PASSWORD manquant');
+			await new Promise((resolve) => setTimeout(resolve, 400));
+			return fail(401, { refus: true });
+		}
+
+		cookies.set(DEPUTE_ACCESS_COOKIE, issueAccessToken(password, Date.now(), DEPUTE_ACCESS_TTL_MS), {
+			path: '/contactez-votre-depute',
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: !dev,
+			maxAge: DEPUTE_ACCESS_TTL_MS / 1000
+		});
+		redirect(303, '/contactez-votre-depute');
+	}
 };

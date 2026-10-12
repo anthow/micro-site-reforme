@@ -23,6 +23,17 @@ export interface Video {
 	url: string | null;
 }
 
+export interface MobilisationArticle {
+	id: number;
+	created_at: string;
+	titre: string;
+	resume: string | null;
+	texte: string | null;
+	imageUrl: string | null;
+	videoEmbed: string | null;
+	epingle: boolean;
+}
+
 export interface Depute {
 	id: number;
 	nom: string;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import SiteHeader from '$lib/components/SiteHeader.svelte';
 	import type { AvisInitiativeBloc } from '$lib/types';
 	import type { PageData } from './$types';
@@ -95,10 +96,13 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Avis d'initiative – Laissez-nous travailler !</title>
-	<meta name="description" content={description} />
-</svelte:head>
+<Seo
+	title="Position du secteur"
+	description={description}
+	type="article"
+	indexable={data.seo.indexable}
+	siteUrl={data.seo.siteUrl}
+/>
 
 <div class="flex min-h-screen flex-col">
 	<SiteHeader />
