@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import type { CispBloc } from '$lib/types';
 
 	let { videos }: { videos: CispBloc[] } = $props();
@@ -7,10 +8,36 @@
 	let index = $state(0);
 	let loaded = $state<Record<number, boolean>>({});
 	let mounted = $state<Record<number, boolean>>({});
+	let carrousel = $state<HTMLElement | null>(null);
 
 	const count = $derived(items.length);
 	const prevIndex = $derived(count === 0 ? 0 : (index - 1 + count) % count);
 	const nextIndex = $derived(count === 0 ? 0 : (index + 1) % count);
+
+	function embedSrc(url: string): string {
+		const adresse = new URL(url);
+		adresse.searchParams.set('enablejsapi', '1');
+		if (typeof window !== 'undefined') {
+			adresse.searchParams.set('origin', window.location.origin);
+		}
+		return adresse.href;
+	}
+
+	function pauseIframe(iframe: HTMLIFrameElement) {
+		iframe.contentWindow?.postMessage(
+			JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+			'https://www.youtube.com'
+		);
+	}
+
+	function pauseSauf(activeId: number | undefined) {
+		if (!carrousel || activeId == null) return;
+		for (const iframe of carrousel.querySelectorAll('iframe')) {
+			if (!(iframe instanceof HTMLIFrameElement)) continue;
+			if (iframe.dataset.videoId === String(activeId)) continue;
+			pauseIframe(iframe);
+		}
+	}
 
 	$effect(() => {
 		if (count === 0) return;
@@ -19,6 +46,19 @@
 		if (count > 1) {
 			mounted[items[prevIndex].id] = true;
 			mounted[items[nextIndex].id] = true;
+		}
+	});
+
+	$effect(() => {
+		const activeId = items[index]?.id;
+		const frame = requestAnimationFrame(() => pauseSauf(activeId));
+		return () => cancelAnimationFrame(frame);
+	});
+
+	onDestroy(() => {
+		if (!carrousel) return;
+		for (const iframe of carrousel.querySelectorAll('iframe')) {
+			if (iframe instanceof HTMLIFrameElement) pauseIframe(iframe);
 		}
 	});
 
@@ -56,6 +96,7 @@
 <svelte:window onkeydown={onKeydown} />
 
 <div
+	bind:this={carrousel}
 	class="relative mx-auto w-full max-w-3xl select-none"
 	role="region"
 	aria-roledescription="carrousel"
@@ -63,7 +104,7 @@
 >
 	<div class="relative h-52 overflow-hidden sm:h-72">
 		{#each items as video, i (video.id)}
-			{#if mounted[video.id]}
+			{#if mounted[video.id] && video.videoUrl}
 				{@const offset = wrapOffset(i)}
 				{@const active = offset === 0}
 				{@const visible = Math.abs(offset) <= 1}
@@ -84,7 +125,8 @@
 							<div class="absolute inset-0 animate-pulse bg-ink-light/10 dark:bg-ink-dark/10" aria-hidden="true"></div>
 						{/if}
 						<iframe
-							src={video.videoUrl}
+							src={embedSrc(video.videoUrl)}
+							data-video-id={video.id}
 							class="absolute inset-0 h-full w-full"
 							title={video.titre}
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
