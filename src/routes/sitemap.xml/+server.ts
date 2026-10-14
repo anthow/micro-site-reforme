@@ -18,7 +18,8 @@ export const GET: RequestHandler = async () => {
 		});
 	}
 
-	const xml = buildSitemapXml(siteUrl, publicSitemapEntries(await avisPublicationDate()));
+	const avisDate = await avisPublicationDate();
+	const xml = buildSitemapXml(siteUrl, publicSitemapEntries(avisDate, avisDate));
 	return new Response(xml, {
 		headers: {
 			'content-type': 'application/xml; charset=utf-8',

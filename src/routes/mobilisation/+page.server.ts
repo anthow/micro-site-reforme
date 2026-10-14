@@ -1,17 +1,23 @@
+import {
+	MOBILISATION_COLUMNS,
+	mobilisationCategorie,
+	presentMobilisationList,
+	type MobilisationRow
+} from '$lib/mobilisation';
 import { loadProblem } from '$lib/publicContent';
-import { presentMobilisationList, type MobilisationRow } from '$lib/mobilisation';
 import { supabase } from '$lib/supabaseClient';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const result = await supabase
-		.from('Mobilisation')
-		.select('id, created_at, titre, resume, image_url, video_url, lien, abonnement, epingle, publie, "Date"')
-		.eq('publie', true)
-		.order('created_at', { ascending: false });
+export const load: PageServerLoad = async ({ url }) => {
+	const categorie = mobilisationCategorie(url.searchParams.get('categorie'));
+	let query = supabase.from('Mobilisation').select(MOBILISATION_COLUMNS).eq('"Publie"', true);
+	if (categorie) query = query.eq('"Categorie"', categorie);
+
+	const result = await query;
 
 	return {
 		articles: presentMobilisationList((result.data ?? []) as MobilisationRow[]),
+		categorie,
 		loadError: loadProblem(result.error)
 	};
 };

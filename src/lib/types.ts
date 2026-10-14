@@ -3,7 +3,41 @@ export interface Homepage {
 	Titre: string | null;
 	Soustitre: string | null;
 	Texte: string | null;
+	Points_cles: string | null;
 	Image_hero_URL: string | null;
+}
+
+export interface EnjeuxMaj {
+	texte: string | null;
+	date: { iso: string; label: string } | null;
+}
+
+export interface Partenaire {
+	id: number;
+	nom: string;
+	logoUrl: string;
+	lien: string | null;
+}
+
+export interface CarrouselSlide {
+	id: number;
+	titre: string;
+	texte: string | null;
+	imageUrl: string | null;
+	lien: string | null;
+}
+
+export interface ReelVideo {
+	id: number;
+	titre: string | null;
+	url: string;
+}
+
+export interface PositionContenu {
+	titre: string | null;
+	paragraphes: string[];
+	pdfUrl: string | null;
+	misAJour: { iso: string; label: string } | null;
 }
 
 export interface FaqEntry {
@@ -22,6 +56,8 @@ export interface Video {
 	id: number;
 	url: string | null;
 }
+
+export type MobilisationCategorie = 'communique' | 'revue_presse' | 'retour_actions';
 
 export interface MobilisationArticle {
 	id: number;

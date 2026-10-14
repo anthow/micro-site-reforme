@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AbonnementBadge from '$lib/components/AbonnementBadge.svelte';
 	import MobilisationMedia from '$lib/components/MobilisationMedia.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import { articlePath } from '$lib/mobilisation';
@@ -14,30 +15,23 @@
 </script>
 
 {#snippet card(article: MobilisationArticle)}
-	{@const href = article.lien ?? articlePath(article.id, article.titre)}
-	{@const external = article.lien != null}
+	{@const detail = articlePath(article.id, article.titre)}
 	<article
-		class="flex h-full flex-col overflow-hidden rounded-lg border bg-white dark:bg-page-dark {article.epingle
-			? 'border-accent/40'
-			: 'border-ink-light/10 dark:border-ink-dark/10'}"
+		class="flex h-full flex-col overflow-hidden rounded-lg border border-ink-light/10 bg-white dark:border-ink-dark/10 dark:bg-page-dark"
 	>
 		{#if article.imageUrl || article.videoEmbed}
 			<MobilisationMedia
 				titre={article.titre}
 				imageUrl={article.imageUrl}
 				videoEmbed={article.videoEmbed}
-				href={article.videoEmbed ? null : href}
-				{external}
+				href={article.videoEmbed ? null : detail}
 			/>
 		{/if}
 		<div class="min-w-0 px-5 py-5 sm:px-6">
-			<h2 class="font-heading text-2xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark">
-				<a
-					{href}
-					target={external ? '_blank' : undefined}
-					rel={external ? 'noopener noreferrer' : undefined}
-					class="transition-colors hover:text-accent"
-				>
+			<h2
+				class="whitespace-pre-line font-heading text-2xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark"
+			>
+				<a href={detail} class="transition-colors hover:text-accent">
 					{article.titre}
 				</a>
 			</h2>
@@ -47,34 +41,48 @@
 				</p>
 			{/if}
 			{#if article.resume}
-				<p class="mt-3 font-heading text-base font-medium leading-relaxed text-ink-light/80 dark:text-ink-dark/80">
+				<p
+					class="mt-3 whitespace-pre-line font-heading text-base font-medium leading-relaxed text-ink-light/80 dark:text-ink-dark/80"
+				>
 					{article.resume}
 				</p>
 			{/if}
-			<p class="mt-4">
-				<a
-					{href}
-					target={external ? '_blank' : undefined}
-					rel={external ? 'noopener noreferrer' : undefined}
-					class="font-heading text-sm font-semibold tracking-tight text-accent underline decoration-accent/40 underline-offset-4 transition-colors hover:text-ink-light hover:decoration-ink-light dark:hover:text-ink-dark dark:hover:decoration-ink-dark"
-				>
-					{article.abonnement ? 'Lire plus (accès abonnés)' : 'Lire la suite'}
-				</a>
-			</p>
+			<div class="mt-4 flex flex-wrap items-center gap-3">
+				{#if article.lien}
+					<a
+						href={article.lien}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2.5 font-heading text-sm font-bold tracking-tight text-white transition-opacity hover:opacity-90"
+					>
+						Lire l'article
+					</a>
+					{#if article.abonnement}
+						<AbonnementBadge />
+					{/if}
+				{:else}
+					<a
+						href={detail}
+						class="font-heading text-sm font-semibold tracking-tight text-accent underline decoration-accent/40 underline-offset-4 transition-colors hover:text-ink-light hover:decoration-ink-light dark:hover:text-ink-dark dark:hover:decoration-ink-dark"
+					>
+						Lire la suite
+					</a>
+				{/if}
+			</div>
 		</div>
 	</article>
 {/snippet}
 
 <Seo
 	title={`Mobilisation | ${siteTitle}`}
-	description="Textes, images et vidéos pour suivre la mobilisation du secteur CISP."
+	description="Communiqués de presse, revue de presse et retours d'actions."
 	indexable={data.seo.indexable}
 	siteUrl={data.seo.siteUrl}
 />
 
 <section class="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
 	<h1
-		class="mb-10 text-center font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl"
+		class="mb-8 text-center font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl"
 	>
 		Mobilisation
 	</h1>

@@ -1,4 +1,29 @@
-import type { Video } from '$lib/types';
+import { safeResourceUrl } from './safeUrl.ts';
+import type { Video } from './types.ts';
+
+const REEL_WIDTH = '267';
+const REEL_HEIGHT = '476';
+
+export function facebookPluginSrc(postUrl: string | null | undefined): string | null {
+	const safe = safeResourceUrl(postUrl);
+	if (!safe) return null;
+
+	let host = '';
+	try {
+		host = new URL(safe).hostname;
+	} catch {
+		return null;
+	}
+
+	const facebook =
+		host === 'facebook.com' ||
+		host.endsWith('.facebook.com') ||
+		host === 'fb.watch' ||
+		host.endsWith('.fb.watch');
+	if (!facebook) return null;
+
+	return `https://www.facebook.com/plugins/video.php?height=${REEL_HEIGHT}&href=${encodeURIComponent(safe)}&show_text=false&width=${REEL_WIDTH}&t=0`;
+}
 
 const PLAYABLE_MARKERS = ['hd_src', 'sd_src', 'dash_manifest'] as const;
 const CHECK_TIMEOUT_MS = 4000;

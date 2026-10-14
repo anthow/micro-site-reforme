@@ -1,23 +1,18 @@
-import { loadProblem, sanitizeAvis, sanitizeLogos } from '$lib/publicContent';
+import { loadProblem, sanitizeAvis } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
-import type { AvisInitiativeBloc, LogoFede } from '$lib/types';
+import type { AvisInitiativeBloc } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const [avisResult, logosResult] = await Promise.all([
-		supabase
-			.from('Avis_initiative')
-			.select('id, ordre, type, texte, ancre')
-			.order('ordre', { ascending: true }),
-		supabase.from('Logo_fede').select('id, url, "url-website"').order('id', { ascending: true })
-	]);
+	const avisResult = await supabase
+		.from('Avis_initiative')
+		.select('id, ordre, type, texte, ancre')
+		.order('ordre', { ascending: true });
 
 	return {
 		blocs: sanitizeAvis((avisResult.data ?? []) as AvisInitiativeBloc[]),
-		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		errors: {
-			avis: loadProblem(avisResult.error),
-			logos: loadProblem(logosResult.error)
+			avis: loadProblem(avisResult.error)
 		}
 	};
 };

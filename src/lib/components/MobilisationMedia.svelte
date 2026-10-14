@@ -26,6 +26,7 @@
 			frameborder="0"
 			allowfullscreen
 			allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+			loading={eager ? 'eager' : 'lazy'}
 		></iframe>
 	</div>
 {:else if imageUrl}
@@ -39,7 +40,7 @@
 			<img
 				src={imageUrl}
 				alt={alt}
-				class="block h-auto max-h-60 w-auto max-w-full object-contain"
+				class="block max-h-[32rem] w-full object-contain"
 				loading={eager ? 'eager' : 'lazy'}
 			/>
 		</a>

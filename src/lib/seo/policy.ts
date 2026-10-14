@@ -27,10 +27,19 @@ export function robotsTxt(indexable: boolean, siteUrl: string): string {
 	return `${lines.join('\n')}\n`;
 }
 
-export function publicSitemapEntries(avisPublicationDate: string | null): SitemapEntry[] {
+export function publicSitemapEntries(
+	avisPublicationDate: string | null,
+	positionPublicationDate: string | null = null
+): SitemapEntry[] {
 	const avisDate = avisPublicationDate && DATE.test(avisPublicationDate) ? avisPublicationDate : undefined;
+	const positionDate =
+		positionPublicationDate && DATE.test(positionPublicationDate) ? positionPublicationDate : undefined;
 	return [
 		{ loc: '/' },
+		{ loc: '/enjeux' },
+		{ loc: '/mobilisation' },
+		{ loc: '/position', lastmod: positionDate },
+		{ loc: '/temoignages' },
 		{ loc: '/avis-initiative', lastmod: avisDate },
 		{ loc: '/avis-initiative-2026-10-07.pdf', lastmod: '2026-10-07' }
 	];

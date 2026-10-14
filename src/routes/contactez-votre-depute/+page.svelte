@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SiteHeader from '$lib/components/SiteHeader.svelte';
 	import {
 		MAIL_SUBJECT,
 		buildMailLinks,
@@ -14,9 +13,7 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const deputes = $derived(data.deputes);
-	const logos = $derived(data.logos ?? []);
 	const campagneEmail = $derived(data.campagneEmail);
-	const currentYear = new Date().getFullYear();
 
 	let selectedId = $state<number | null>(null);
 	let selectedCirconscription = $state('');
@@ -65,10 +62,6 @@
 				})
 			: null
 	);
-
-	function logoImageClass(id: number) {
-		return id === 1 ? 'h-16 w-auto object-contain sm:h-[4.5rem]' : 'h-12 w-auto object-contain';
-	}
 
 	function track(bouton: BoutonClic, depute: Depute) {
 		void fetch('/contactez-votre-depute/clic', {
@@ -148,10 +141,6 @@
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<div class="flex min-h-screen flex-col">
-	<SiteHeader />
-
-	<main class="flex-1">
 		<section class="border-b border-ink-light/10 dark:border-ink-dark/10">
 			<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
 				<h1
@@ -376,43 +365,3 @@
 			</div>
 		</section>
 		{/if}
-	</main>
-
-	<footer class="border-t border-ink-light/10 bg-white">
-		<div
-			class="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-6 text-center font-heading text-sm font-medium tracking-tight text-ink-light/60 sm:px-6"
-		>
-			{#if logos.length > 0}
-				<div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-					{#each logos as logo (logo.id)}
-						{#if logo.url}
-							{#if logo['url-website']}
-								<a
-									href={logo['url-website']}
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label={`Ouvrir le site du logo ${logo.id}`}
-								>
-									<img
-										src={logo.url}
-										alt={`Logo fédération ${logo.id}`}
-										class={logoImageClass(logo.id)}
-										loading="lazy"
-									/>
-								</a>
-							{:else}
-								<img
-									src={logo.url}
-									alt={`Logo fédération ${logo.id}`}
-									class={logoImageClass(logo.id)}
-									loading="lazy"
-								/>
-							{/if}
-						{/if}
-					{/each}
-				</div>
-			{/if}
-			<p>© {currentYear}</p>
-		</div>
-	</footer>
-</div>

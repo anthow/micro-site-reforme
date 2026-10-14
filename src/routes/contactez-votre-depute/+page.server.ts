@@ -9,9 +9,9 @@ import {
 	passwordsMatch
 } from '$lib/deputeAccess';
 import { deputeAccessGranted, deputePagePassword } from '$lib/deputeAccess.server';
-import { loadProblem, sanitizeLogos } from '$lib/publicContent';
+import { loadProblem } from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
-import type { Depute, LogoFede } from '$lib/types';
+import type { Depute } from '$lib/types';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -20,23 +20,19 @@ export const prerender = false;
 const locked = {
 	locked: true,
 	deputes: [] as Depute[],
-	logos: [] as LogoFede[],
 	campagneEmail: null,
-	errors: { deputes: null, logos: null }
+	errors: { deputes: null as string | null }
 };
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	if (!deputeAccessGranted(cookies.get(DEPUTE_ACCESS_COOKIE))) return locked;
 
-	const [deputesResult, logosResult] = await Promise.all([
-		supabase
-			.from('deputes')
-			.select('id, nom, circonscription, email, parti, sexe')
-			.eq('actif', true)
-			.eq('role', 'depute')
-			.order('nom', { ascending: true }),
-		supabase.from('Logo_fede').select('id, url, "url-website"').order('id', { ascending: true })
-	]);
+	const deputesResult = await supabase
+		.from('deputes')
+		.select('id, nom, circonscription, email, parti, sexe')
+		.eq('actif', true)
+		.eq('role', 'depute')
+		.order('nom', { ascending: true });
 
 	const campagneEmail =
 		publicEnv.PUBLIC_CAMPAGNE_EMAIL?.trim() || privateEnv.CAMPAGNE_EMAIL?.trim() || null;
@@ -48,11 +44,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	return {
 		locked: false,
 		deputes,
-		logos: sanitizeLogos((logosResult.data ?? []) as LogoFede[]),
 		campagneEmail,
 		errors: {
-			deputes: loadProblem(deputesResult.error),
-			logos: loadProblem(logosResult.error)
+			deputes: loadProblem(deputesResult.error)
 		}
 	};
 };

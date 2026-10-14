@@ -15,12 +15,12 @@ export function cspDirectives(): CspDirectives {
 		'object-src': ['none'],
 		'frame-ancestors': ['none'],
 		'form-action': ['self'],
-		'script-src': ['self'],
+		'script-src': ['self', 'https://www.google.com', 'https://www.gstatic.com'],
 		'style-src': ['self', 'unsafe-inline', 'https://fonts.googleapis.com'],
 		'font-src': ['self', 'https://fonts.gstatic.com'],
-		'img-src': ['self', 'data:', 'blob:', 'https://wcvhjrwplxthowpsrgqe.supabase.co'],
-		'frame-src': ['https://www.facebook.com'],
-		'connect-src': ['self'],
+		'img-src': ['self', 'data:', 'blob:', 'https://wcvhjrwplxthowpsrgqe.supabase.co', 'https://www.gstatic.com'],
+		'frame-src': ['https://www.facebook.com', 'https://www.google.com', 'https://recaptcha.google.com'],
+		'connect-src': ['self', 'https://www.google.com'],
 		'upgrade-insecure-requests': true
 	};
 }

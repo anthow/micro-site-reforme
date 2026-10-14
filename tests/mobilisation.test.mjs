@@ -6,6 +6,7 @@ import {
 	articleSlug,
 	facebookReelEmbed,
 	formatPublicationDate,
+	mobilisationCategorie,
 	presentMobilisation,
 	presentMobilisationList,
 	sortMobilisation,
@@ -34,35 +35,35 @@ describe('presentMobilisationList', () => {
 			{
 				id: 1,
 				created_at: '2026-10-02T00:00:00.000Z',
-				titre: 'Publié',
-				resume: ' Résumé ',
-				texte: null,
-				image_url: 'javascript:alert(1)',
-				video_url: 'https://www.facebook.com/reel/1',
-				epingle: false,
-				publie: true
+				Titre: 'Publié',
+				Resume: ' Résumé ',
+				Texte: null,
+				Image_URL: 'javascript:alert(1)',
+				Video_URL: 'https://www.facebook.com/reel/1',
+				Epingle: false,
+				Publie: true
 			},
 			{
 				id: 2,
 				created_at: '2026-10-03T00:00:00.000Z',
-				titre: 'Brouillon',
-				resume: null,
-				texte: null,
-				image_url: '/cone.png',
-				video_url: null,
-				epingle: true,
-				publie: false
+				Titre: 'Brouillon',
+				Resume: null,
+				Texte: null,
+				Image_URL: '/cone.png',
+				Video_URL: null,
+				Epingle: true,
+				Publie: false
 			},
 			{
 				id: 3,
 				created_at: '2026-10-01T00:00:00.000Z',
-				titre: '   ',
-				resume: null,
-				texte: null,
-				image_url: null,
-				video_url: null,
-				epingle: false,
-				publie: true
+				Titre: '   ',
+				Resume: null,
+				Texte: null,
+				Image_URL: null,
+				Video_URL: null,
+				Epingle: false,
+				Publie: true
 			}
 		]);
 
@@ -72,8 +73,10 @@ describe('presentMobilisationList', () => {
 		assert.equal(articles[0].imageUrl, null);
 		assert.equal(articles[0].lien, null);
 		assert.equal(articles[0].abonnement, false);
-		assert.match(articles[0].videoEmbed ?? '', /facebook\.com\/plugins\/video\.php/);
-		assert.match(articles[0].videoEmbed ?? '', /width=267/);
+		assert.equal(
+			articles[0].videoEmbed,
+			`https://www.facebook.com/plugins/video.php?height=476&href=${encodeURIComponent('https://www.facebook.com/reel/1')}&show_text=false&width=267&t=0`
+		);
 	});
 });
 
@@ -109,14 +112,14 @@ describe('présent HTML', () => {
 		const article = presentMobilisation({
 			id: 14,
 			created_at: '2026-10-12T00:00:00.000Z',
-			titre: 'Recours',
-			resume: null,
-			texte:
+			Titre: 'Recours',
+			Resume: null,
+			Texte:
 				'<article><h2>Titre</h2><p class="date"><time datetime="2026-09-18">18 septembre 2026</time></p><ul><li><strong>Accès</strong> restreint</li></ul><p class="source">Source : <a href="https://www.interfede.be/note.pdf" target="_blank" onclick="alert(1)">PDF</a></p><script>alert(1)</script></article>',
-			image_url: null,
-			video_url: null,
-			epingle: false,
-			publie: true
+			Image_URL: null,
+			Video_URL: null,
+			Epingle: false,
+			Publie: true
 		});
 
 		assert.equal(article?.texteHtml, true);
@@ -132,19 +135,19 @@ describe('lien externe', () => {
 	const base = {
 		id: 20,
 		created_at: '2026-10-12T00:00:00.000Z',
-		titre: 'Article de presse',
-		resume: null,
-		texte: null,
-		image_url: null,
-		video_url: null,
-		epingle: false,
-		publie: true
+		Titre: 'Article de presse',
+		Resume: null,
+		Texte: null,
+		Image_URL: null,
+		Video_URL: null,
+		Epingle: false,
+		Publie: true
 	};
 
 	it('garde une adresse https et signale l’abonnement', () => {
 		const article = presentMobilisation({
 			...base,
-			lien: ' https://www.exemple.be/article ',
+			Lien: ' https://www.exemple.be/article ',
 			abonnement: true
 		});
 
@@ -155,7 +158,7 @@ describe('lien externe', () => {
 	it('ignore une adresse dangereuse', () => {
 		const article = presentMobilisation({
 			...base,
-			lien: 'javascript:alert(1)',
+			Lien: 'javascript:alert(1)',
 			abonnement: false
 		});
 
@@ -176,16 +179,73 @@ describe('formatPublicationDate', () => {
 		const article = presentMobilisation({
 			id: 14,
 			created_at: '2026-10-12T00:00:00.000Z',
-			titre: 'Recours',
-			resume: null,
-			texte: null,
-			image_url: null,
-			video_url: null,
-			epingle: false,
-			publie: true,
+			Titre: 'Recours',
+			Resume: null,
+			Texte: null,
+			Image_URL: null,
+			Video_URL: null,
+			Epingle: false,
+			Publie: true,
 			Date: '2026-09-18'
 		});
 		assert.equal(article?.publication?.label, '18 septembre 2026');
+	});
+});
+
+describe('tri par Date', () => {
+	it('met les épinglés d’abord, puis la Date, et created_at si la Date est vide', () => {
+		const articles = presentMobilisationList([
+			{
+				id: 1,
+				created_at: '2026-10-10T00:00:00.000Z',
+				Titre: 'Ancien daté',
+				Resume: null,
+				Texte: null,
+				Image_URL: null,
+				Video_URL: null,
+				Epingle: false,
+				Publie: true,
+				Date: '2026-09-01'
+			},
+			{
+				id: 2,
+				created_at: '2026-10-02T00:00:00.000Z',
+				Titre: 'Sans date',
+				Resume: null,
+				Texte: null,
+				Image_URL: null,
+				Video_URL: null,
+				Epingle: false,
+				Publie: true,
+				Date: null
+			},
+			{
+				id: 3,
+				created_at: '2026-01-01T00:00:00.000Z',
+				Titre: 'Épinglé',
+				Resume: null,
+				Texte: null,
+				Image_URL: null,
+				Video_URL: null,
+				Epingle: true,
+				Publie: true,
+				Date: '2026-01-15'
+			}
+		]);
+
+		assert.deepEqual(
+			articles.map((article) => article.id),
+			[3, 2, 1]
+		);
+		assert.equal(articles[1].publication?.label, '2 octobre 2026');
+	});
+});
+
+describe('catégories', () => {
+	it('reconnaît les rubriques connues et ignore le reste', () => {
+		assert.equal(mobilisationCategorie('retour_actions'), 'retour_actions');
+		assert.equal(mobilisationCategorie('autre'), null);
+		assert.equal(mobilisationCategorie(null), null);
 	});
 });
 

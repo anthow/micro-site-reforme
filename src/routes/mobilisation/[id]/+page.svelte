@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AbonnementBadge from '$lib/components/AbonnementBadge.svelte';
 	import MobilisationMedia from '$lib/components/MobilisationMedia.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import { splitParagraphs } from '$lib/mobilisation';
@@ -14,7 +15,7 @@
 
 {#if article}
 	<Seo
-		title={`${article.titre} | ${siteTitle}`}
+		title={`${article.titre.replace(/\s+/g, ' ')} | ${siteTitle}`}
 		{description}
 		type="article"
 		indexable={data.seo.indexable}
@@ -38,7 +39,7 @@
 		</p>
 	{:else}
 		<h1
-			class="font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl {article.publication
+			class="whitespace-pre-line font-heading text-3xl font-bold leading-[1.15] tracking-tighter text-ink-light dark:text-ink-dark sm:text-4xl {article.publication
 				? ''
 				: 'mb-8'}"
 		>
@@ -78,6 +79,22 @@
 					</p>
 				{/each}
 			</div>
+		{/if}
+
+		{#if article.lien}
+			<p class="mt-8 flex flex-wrap items-center gap-3">
+				<a
+					href={article.lien}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2.5 font-heading text-sm font-bold tracking-tight text-white transition-opacity hover:opacity-90"
+				>
+					Lire l'article
+				</a>
+				{#if article.abonnement}
+					<AbonnementBadge />
+				{/if}
+			</p>
 		{/if}
 	{/if}
 </article>
