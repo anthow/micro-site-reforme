@@ -206,7 +206,7 @@
 					<p class="font-heading text-sm font-medium text-accent" role="alert">{erreurLocale}</p>
 				{/if}
 
-				<div bind:this={boite}></div>
+				<div class="h-0 overflow-hidden" bind:this={boite} aria-hidden="true"></div>
 
 				<button
 					type="submit"

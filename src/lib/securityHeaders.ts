@@ -18,9 +18,21 @@ export function cspDirectives(): CspDirectives {
 		'script-src': ['self', 'https://www.google.com', 'https://www.gstatic.com'],
 		'style-src': ['self', 'unsafe-inline', 'https://fonts.googleapis.com'],
 		'font-src': ['self', 'https://fonts.gstatic.com'],
-		'img-src': ['self', 'data:', 'blob:', 'https://wcvhjrwplxthowpsrgqe.supabase.co', 'https://www.gstatic.com'],
-		'frame-src': ['https://www.facebook.com', 'https://www.google.com', 'https://recaptcha.google.com'],
-		'connect-src': ['self', 'https://www.google.com'],
+		'img-src': [
+			'self',
+			'data:',
+			'blob:',
+			'https://wcvhjrwplxthowpsrgqe.supabase.co',
+			'https://www.gstatic.com',
+			'https://www.interfede.be'
+		],
+		'frame-src': [
+			'https://www.facebook.com',
+			'https://www.google.com',
+			'https://recaptcha.google.com',
+			'https://www.youtube.com'
+		],
+		'connect-src': ['self', 'https://www.google.com', 'https://www.gstatic.com', 'https://recaptcha.google.com'],
 		'upgrade-insecure-requests': true
 	};
 }

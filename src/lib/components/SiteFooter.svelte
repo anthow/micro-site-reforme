@@ -85,9 +85,12 @@
 			</p>
 		{/if}
 
-		<section id="contact" class="scroll-mt-24">
-			<h2 class="text-base font-bold tracking-tight text-ink-light dark:text-ink-dark">Contact</h2>
-		</section>
+		<a
+			href="/#ecrire"
+			class="text-base font-bold tracking-tight text-ink-light transition-colors hover:text-accent dark:text-ink-dark"
+		>
+			Contact
+		</a>
 
 		<p class="text-sm font-medium tracking-tight text-ink-light/60 dark:text-ink-dark/60">
 			© {currentYear}

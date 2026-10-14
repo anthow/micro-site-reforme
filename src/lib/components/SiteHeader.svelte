@@ -25,6 +25,11 @@
 			href: '/#temoignages',
 			label: 'Témoignages secteur',
 			active: pathname === '/' && hash === '#temoignages'
+		},
+		{
+			href: '/cisp',
+			label: 'CISP ?',
+			active: pathname === '/cisp'
 		}
 	]);
 

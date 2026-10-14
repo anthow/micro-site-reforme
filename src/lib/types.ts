@@ -107,3 +107,17 @@ export interface AvisInitiativeBloc {
 	texte: string;
 	ancre: string | null;
 }
+
+export type CispRole = 'intro' | 'tiroir' | 'outil';
+export type CispSource = 'IF' | 'CAIPS';
+
+export interface CispBloc {
+	id: number;
+	role: CispRole;
+	titre: string;
+	texte: string | null;
+	videoUrl: string | null;
+	imageUrl: string | null;
+	lien: string | null;
+	source: CispSource | null;
+}

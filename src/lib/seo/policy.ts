@@ -36,6 +36,7 @@ export function publicSitemapEntries(
 		positionPublicationDate && DATE.test(positionPublicationDate) ? positionPublicationDate : undefined;
 	return [
 		{ loc: '/' },
+		{ loc: '/cisp' },
 		{ loc: '/enjeux' },
 		{ loc: '/mobilisation' },
 		{ loc: '/position', lastmod: positionDate },
