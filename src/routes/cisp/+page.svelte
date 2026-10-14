@@ -14,7 +14,7 @@
 	let ouvert = $state<number | null>(null);
 
 	const html =
-		'font-heading text-base font-medium leading-snug tracking-tight text-ink-light dark:text-ink-dark [&_a]:text-accent [&_a]:underline [&_li]:mt-1 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul:last-child]:mb-0';
+		'font-heading text-base font-medium leading-snug tracking-tight text-ink-light dark:text-ink-dark [&_a]:text-accent [&_a]:underline [&_li]:mt-1 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_strong]:text-accent [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul:last-child]:mb-0';
 
 	function plain(value: string) {
 		return value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
