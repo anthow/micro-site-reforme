@@ -1,9 +1,11 @@
+import { idMesureGa } from '$lib/analytics';
 import { formatPublicationDate } from '$lib/mobilisation';
 import { loadProblem, presentPartenaires, presentSlogans, sanitizeLogos } from '$lib/publicContent';
 import { publicSiteUrl } from '$lib/seo/config';
 import { isSiteIndexable } from '$lib/seo/indexable.server';
 import { supabase } from '$lib/supabaseClient';
 import type { EnjeuxMaj, LogoFede } from '$lib/types';
+import { env as publicEnv } from '$env/dynamic/public';
 import type { LayoutServerLoad } from './$types';
 
 const SLOGANS_EXISTANTS = [
@@ -40,6 +42,7 @@ export const load: LayoutServerLoad = async () => {
 			indexable: isSiteIndexable(),
 			siteUrl: publicSiteUrl()
 		},
+		gaMeasurementId: idMesureGa(publicEnv.PUBLIC_GA_MEASUREMENT_ID),
 		slogans: slogans.length > 0 ? slogans : SLOGANS_EXISTANTS,
 		enjeuxMaj,
 		partenaires: presentPartenaires(partenairesResult.data ?? []),

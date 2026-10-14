@@ -15,7 +15,12 @@ export function cspDirectives(): CspDirectives {
 		'object-src': ['none'],
 		'frame-ancestors': ['none'],
 		'form-action': ['self'],
-		'script-src': ['self', 'https://www.google.com', 'https://www.gstatic.com'],
+		'script-src': [
+			'self',
+			'https://www.google.com',
+			'https://www.gstatic.com',
+			'https://www.googletagmanager.com'
+		],
 		'style-src': ['self', 'unsafe-inline', 'https://fonts.googleapis.com'],
 		'font-src': ['self', 'https://fonts.gstatic.com'],
 		'img-src': [
@@ -24,15 +29,27 @@ export function cspDirectives(): CspDirectives {
 			'blob:',
 			'https://wcvhjrwplxthowpsrgqe.supabase.co',
 			'https://www.gstatic.com',
-			'https://www.interfede.be'
+			'https://www.interfede.be',
+			'https://www.googletagmanager.com',
+			'https://*.google-analytics.com'
 		],
 		'frame-src': [
 			'https://www.facebook.com',
 			'https://www.google.com',
 			'https://recaptcha.google.com',
-			'https://www.youtube.com'
+			'https://www.youtube.com',
+			'https://www.googletagmanager.com'
 		],
-		'connect-src': ['self', 'https://www.google.com', 'https://www.gstatic.com', 'https://recaptcha.google.com'],
+		'connect-src': [
+			'self',
+			'https://www.google.com',
+			'https://www.gstatic.com',
+			'https://recaptcha.google.com',
+			'https://www.googletagmanager.com',
+			'https://*.google-analytics.com',
+			'https://*.analytics.google.com',
+			'https://*.google.com'
+		],
 		'upgrade-insecure-requests': true
 	};
 }

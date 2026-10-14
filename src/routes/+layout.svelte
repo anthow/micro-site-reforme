@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { afterNavigate, disableScrollHandling, onNavigate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import GoogleAnalytics from '$lib/components/GoogleAnalytics.svelte';
 	import SiteFooter from '$lib/components/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/SiteHeader.svelte';
 	import '../app.css';
@@ -63,6 +64,10 @@
 		<meta name="robots" content="noindex, nofollow" />
 	{/if}
 </svelte:head>
+
+{#if data.gaMeasurementId}
+	<GoogleAnalytics measurementId={data.gaMeasurementId} />
+{/if}
 
 <div class="flex min-h-screen flex-col">
 	<SiteHeader />
