@@ -28,7 +28,7 @@
 
 {#snippet slogan(text: string)}
 	<p
-		class="flex items-center justify-center gap-3 text-center font-heading text-2xl font-bold leading-tight tracking-tight text-ink-light dark:text-ink-dark sm:text-3xl"
+		class="flex items-center justify-center gap-3 text-center font-heading text-2xl font-bold leading-tight tracking-tight text-accent sm:text-3xl"
 	>
 		<img src="/cone.png" alt="" class="h-7 w-auto shrink-0 sm:h-8" aria-hidden="true" />
 		<span class="max-w-xl">{text}</span>

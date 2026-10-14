@@ -14,7 +14,14 @@ import {
 	signerJeton
 } from '$lib/contactForm';
 import { filterPlayableFacebookVideos } from '$lib/facebookVideo';
-import { loadProblem, linesOf, presentCarousel, sanitizeHomepage, sanitizeVideos } from '$lib/publicContent';
+import {
+	loadProblem,
+	linesOf,
+	presentCarousel,
+	sanitizeFaq,
+	sanitizeHomepage,
+	sanitizeVideos
+} from '$lib/publicContent';
 import { supabase } from '$lib/supabaseClient';
 import type { FaqEntry, Homepage, Video } from '$lib/types';
 import { fail } from '@sveltejs/kit';
@@ -60,7 +67,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		recaptchaSiteKey: cleSiteRecaptcha(),
 		homepage,
 		points: linesOf(homepage?.Points_cles),
-		faq: (faqResult.data ?? []) as unknown as FaqEntry[],
+		faq: sanitizeFaq((faqResult.data ?? []) as unknown as FaqEntry[]),
 		videos: moveVideoToPosition(playableVideos, 2, 5),
 		slides: presentCarousel(carouselResult.data ?? []),
 		errors: {

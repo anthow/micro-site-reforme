@@ -1,10 +1,11 @@
 import { facebookPluginSrc } from './facebookVideo.ts';
 import { formatPublicationDate, splitParagraphs } from './mobilisation.ts';
-import { sanitizeRichText } from './sanitizeRichText.ts';
+import { sanitizeArticleHtml, sanitizeRichText } from './sanitizeRichText.ts';
 import { safeResourceUrl } from './safeUrl.ts';
 import type {
 	AvisInitiativeBloc,
 	CarrouselSlide,
+	FaqEntry,
 	Homepage,
 	LogoFede,
 	Partenaire,
@@ -48,6 +49,16 @@ export function sanitizeVideos(videos: Video[]): Video[] {
 	return videos.flatMap((video) => {
 		const url = safeResourceUrl(video.url);
 		return url ? [{ ...video, url }] : [];
+	});
+}
+
+export function sanitizeFaq(entries: FaqEntry[]): FaqEntry[] {
+	return entries.flatMap((entry) => {
+		const question = entry.Question?.trim() || null;
+		const brut = entry.Réponse?.replace(/\r\n/g, '\n').trim() || null;
+		const reponse = brut ? sanitizeArticleHtml(brut).trim() || null : null;
+		if (!question || !reponse) return [];
+		return [{ ...entry, Question: question, Réponse: reponse }];
 	});
 }
 

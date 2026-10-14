@@ -9,12 +9,8 @@
 	let { question, answer }: Props = $props();
 	let open = $state(false);
 
-	const paragraphs = $derived(
-		answer
-			.split(/\n\s*\n+/)
-			.map((p) => p.trim())
-			.filter(Boolean)
-	);
+	const html =
+		'font-heading text-base font-medium leading-snug tracking-tight text-ink-light dark:text-ink-dark [&_a]:text-accent [&_a]:underline [&_li]:mt-1 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul:last-child]:mb-0 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol:last-child]:mb-0';
 </script>
 
 <div class="border-b border-ink-light/10 dark:border-ink-dark/10">
@@ -49,14 +45,10 @@
 
 	{#if open}
 		<div transition:slide={{ duration: 250 }}>
-			<div
-				class="mb-5 rounded-lg bg-gray-100 px-5 py-4 text-ink-light dark:bg-[#1A1A1A] dark:text-ink-dark"
-			>
-				{#each paragraphs as paragraph}
-					<p class="mb-3 whitespace-pre-line font-heading text-base font-medium leading-snug tracking-tight last:mb-0">
-						{paragraph}
-					</p>
-				{/each}
+			<div class="mb-5 rounded-lg bg-gray-100 px-5 py-4 dark:bg-[#1A1A1A]">
+				<div class={html}>
+					{@html answer}
+				</div>
 			</div>
 		</div>
 	{/if}

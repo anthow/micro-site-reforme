@@ -1,12 +1,42 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { linesOf, presentCarousel, presentPosition, presentSlogans } from '../src/lib/publicContent.ts';
+import {
+	linesOf,
+	presentCarousel,
+	presentPosition,
+	presentSlogans,
+	sanitizeFaq
+} from '../src/lib/publicContent.ts';
 
 describe('lignes', () => {
 	it('découpe slogans et points clés, une ligne chacun', () => {
 		assert.deepEqual(presentSlogans('Un\r\n\nDeux\n  Trois  '), ['Un', 'Deux', 'Trois']);
 		assert.deepEqual(linesOf(''), []);
 		assert.deepEqual(linesOf(null), []);
+	});
+});
+
+describe('sanitizeFaq', () => {
+	it('rend le html des réponses et retire les balises dangereuses', () => {
+		const faq = sanitizeFaq([
+			{
+				id: 1,
+				Question: '  Une question ?  ',
+				Réponse:
+					'<section id="x"><p>Les CISP</p><ul><li>une <strong>formation</strong></li></ul><script>alert(1)</script></section>'
+			},
+			{
+				id: 2,
+				Question: 'Vide',
+				Réponse: '   '
+			}
+		]);
+
+		assert.equal(faq.length, 1);
+		assert.equal(faq[0].Question, 'Une question ?');
+		assert.match(faq[0].Réponse, /<p>Les CISP<\/p>/);
+		assert.match(faq[0].Réponse, /<li>une <strong>formation<\/strong><\/li>/);
+		assert.doesNotMatch(faq[0].Réponse, /section|script/);
 	});
 });
 
