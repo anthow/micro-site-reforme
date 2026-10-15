@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	const faqResult = await supabase
-		.from('FAQ')
+		.from('Enjeux_reforme')
 		.select('id, Question, "Réponse"')
 		.order('id', { ascending: true });
 

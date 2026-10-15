@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	const avisResult = await supabase
-		.from('Avis_initiative')
+		.from('Position_du_secteur')
 		.select('id, ordre, type, texte, ancre')
 		.order('ordre', { ascending: true });
 

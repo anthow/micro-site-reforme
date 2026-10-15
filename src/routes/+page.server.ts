@@ -48,7 +48,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			.select('id, Titre, Soustitre, Texte, Points_cles, Image_hero_URL')
 			.eq('id', 1)
 			.maybeSingle(),
-		supabase.from('FAQ').select('id, Question, "Réponse"').order('id', { ascending: true }),
+		supabase.from('Enjeux_reforme').select('id, Question, "Réponse"').order('id', { ascending: true }),
 		supabase.from('videos').select('id, url').order('id', { ascending: true }),
 		supabase
 			.from('Carrousel')

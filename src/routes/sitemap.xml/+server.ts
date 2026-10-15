@@ -31,7 +31,7 @@ export const GET: RequestHandler = async () => {
 async function avisPublicationDate(): Promise<string | null> {
 	try {
 		const { data, error } = await supabase
-			.from('Avis_initiative')
+			.from('Position_du_secteur')
 			.select('texte')
 			.eq('type', 'date')
 			.order('ordre', { ascending: true })
