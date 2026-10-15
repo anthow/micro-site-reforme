@@ -48,11 +48,25 @@
 
 	function bindPlayer(node: HTMLVideoElement, id: number) {
 		players[id] = node;
+		// Précharger la 1ʳᵉ frame dès le montage (slide latérale ou active).
+		if (node.readyState < 1) node.load();
 		return {
 			destroy() {
 				if (players[id] === node) delete players[id];
 			}
 		};
+	}
+
+	function showPreviewFrame(node: HTMLVideoElement, id: number) {
+		markLoaded(id);
+		// Certains mp4 restent noirs à currentTime=0 tant qu’on n’a pas seek.
+		if (node.readyState >= 1 && node.currentTime === 0) {
+			try {
+				node.currentTime = 0.001;
+			} catch {
+				/* ignore */
+			}
+		}
 	}
 
 	function wrapOffset(i: number): number {
@@ -125,9 +139,10 @@
 								src={video.url}
 								controls={active}
 								playsinline
-								preload={active ? 'metadata' : 'none'}
+								preload="metadata"
 								title="Témoignage du secteur"
-								onloadeddata={() => markLoaded(video.id)}
+								onloadedmetadata={(event) => showPreviewFrame(event.currentTarget, video.id)}
+								onloadeddata={(event) => showPreviewFrame(event.currentTarget, video.id)}
 							></video>
 						{:else}
 							<iframe
