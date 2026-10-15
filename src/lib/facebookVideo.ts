@@ -3,6 +3,7 @@ import type { Video } from './types.ts';
 
 const REEL_WIDTH = '267';
 const REEL_HEIGHT = '476';
+const DIRECT_VIDEO_EXT = /\.(mp4|webm|ogg|ogv|m4v)(?:[?#]|$)/i;
 
 export function facebookPluginSrc(postUrl: string | null | undefined): string | null {
 	const safe = safeResourceUrl(postUrl);
@@ -25,6 +26,23 @@ export function facebookPluginSrc(postUrl: string | null | undefined): string | 
 	return `https://www.facebook.com/plugins/video.php?height=${REEL_HEIGHT}&href=${encodeURIComponent(safe)}&show_text=false&width=${REEL_WIDTH}&t=0`;
 }
 
+/** Fichier média hébergé (mp4/webm/…) hors embed Facebook. */
+export function isDirectVideoUrl(url: string | null | undefined): boolean {
+	const safe = safeResourceUrl(url);
+	if (!safe || facebookPluginSrc(safe)) return false;
+	if (safe.startsWith('/')) return DIRECT_VIDEO_EXT.test(safe);
+
+	try {
+		const parsed = new URL(safe);
+		if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+		if (DIRECT_VIDEO_EXT.test(parsed.pathname)) return true;
+		// Médias WordPress sans extension dans le chemin (ex. /uploads/…/reforme).
+		return /\/uploads\//i.test(parsed.pathname);
+	} catch {
+		return false;
+	}
+}
+
 const PLAYABLE_MARKERS = ['hd_src', 'sd_src', 'dash_manifest'] as const;
 const CHECK_TIMEOUT_MS = 4000;
 const CACHE_TTL_MS = 30 * 60 * 1000;
@@ -38,7 +56,7 @@ export async function filterPlayableFacebookVideos(videos: Video[]): Promise<Vid
 	const results = await Promise.all(
 		withUrl.map(async (video) => ({
 			video,
-			playable: await isFacebookVideoPlayable(video.url)
+			playable: isDirectVideoUrl(video.url) ? true : await isFacebookVideoPlayable(video.url)
 		}))
 	);
 

@@ -40,6 +40,7 @@ export function cspDirectives(): CspDirectives {
 			'https://www.youtube.com',
 			'https://www.googletagmanager.com'
 		],
+		'media-src': ['self', 'https://www.interfede.be', 'blob:'],
 		'connect-src': [
 			'self',
 			'https://www.google.com',

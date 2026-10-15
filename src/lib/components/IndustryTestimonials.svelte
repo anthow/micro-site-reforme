@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isDirectVideoUrl } from '$lib/facebookVideo';
 	import type { Video } from '$lib/types';
 
 	interface Props {
@@ -11,6 +12,7 @@
 	let index = $state(0);
 	let loaded = $state<Record<number, boolean>>({});
 	let mounted = $state<Record<number, boolean>>({});
+	let players = $state<Record<number, HTMLVideoElement | undefined>>({});
 
 	const count = $derived(items.length);
 	const prevIndex = $derived(count === 0 ? 0 : (index - 1 + count) % count);
@@ -23,6 +25,11 @@
 		if (count > 1) {
 			mounted[items[prevIndex].id] = true;
 			mounted[items[nextIndex].id] = true;
+		}
+		const activeId = items[index]?.id;
+		for (const [id, player] of Object.entries(players)) {
+			if (!player) continue;
+			if (Number(id) !== activeId) player.pause();
 		}
 	});
 
@@ -37,6 +44,15 @@
 
 	function markLoaded(id: number) {
 		loaded[id] = true;
+	}
+
+	function bindPlayer(node: HTMLVideoElement, id: number) {
+		players[id] = node;
+		return {
+			destroy() {
+				if (players[id] === node) delete players[id];
+			}
+		};
 	}
 
 	function wrapOffset(i: number): number {
@@ -101,17 +117,31 @@
 								aria-hidden="true"
 							></div>
 						{/if}
-						<iframe
-							src={facebookEmbedSrc(video.url)}
-							class="absolute inset-0 h-full w-full"
-							style="border:none;overflow:hidden"
-							scrolling="no"
-							frameborder="0"
-							allowfullscreen={active}
-							allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-							title="Témoignage du secteur"
-							onload={() => markLoaded(video.id)}
-						></iframe>
+						{#if isDirectVideoUrl(video.url)}
+							<!-- svelte-ignore a11y_media_has_caption -->
+							<video
+								use:bindPlayer={video.id}
+								class="absolute inset-0 h-full w-full bg-black object-contain"
+								src={video.url}
+								controls={active}
+								playsinline
+								preload={active ? 'metadata' : 'none'}
+								title="Témoignage du secteur"
+								onloadeddata={() => markLoaded(video.id)}
+							></video>
+						{:else}
+							<iframe
+								src={facebookEmbedSrc(video.url)}
+								class="absolute inset-0 h-full w-full"
+								style="border:none;overflow:hidden"
+								scrolling="no"
+								frameborder="0"
+								allowfullscreen={active}
+								allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+								title="Témoignage du secteur"
+								onload={() => markLoaded(video.id)}
+							></iframe>
+						{/if}
 						{#if !active && visible}
 							<button
 								type="button"
