@@ -30,9 +30,10 @@ export function sanitizeLogos(logos: LogoFede[]): LogoFede[] {
 
 export function sanitizeHomepage(homepage: Homepage | null): Homepage | null {
 	if (!homepage) return null;
+	const brut = homepage.Texte?.replace(/\r\n/g, '\n').trim() || null;
 	return {
 		...homepage,
-		Texte: homepage.Texte ? sanitizeRichText(homepage.Texte) : homepage.Texte,
+		Texte: brut ? sanitizeArticleHtml(brut).trim() || null : null,
 		Image_hero_URL: safeResourceUrl(homepage.Image_hero_URL)
 	};
 }

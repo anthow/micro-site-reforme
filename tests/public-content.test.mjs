@@ -5,7 +5,8 @@ import {
 	presentCarousel,
 	presentPosition,
 	presentSlogans,
-	sanitizeFaq
+	sanitizeFaq,
+	sanitizeHomepage
 } from '../src/lib/publicContent.ts';
 
 describe('lignes', () => {
@@ -13,6 +14,25 @@ describe('lignes', () => {
 		assert.deepEqual(presentSlogans('Un\r\n\nDeux\n  Trois  '), ['Un', 'Deux', 'Trois']);
 		assert.deepEqual(linesOf(''), []);
 		assert.deepEqual(linesOf(null), []);
+	});
+});
+
+describe('sanitizeHomepage', () => {
+	it('conserve les paragraphes html de l’intro', () => {
+		const page = sanitizeHomepage({
+			id: 1,
+			Titre: 'Titre',
+			Soustitre: null,
+			Texte:
+				'<section id="introduction"><p>Premier</p><p>Avec du <strong>gras</strong></p><script>alert(1)</script></section>',
+			Points_cles: null,
+			Image_hero_URL: null
+		});
+
+		assert.ok(page);
+		assert.match(page.Texte ?? '', /<p>Premier<\/p>/);
+		assert.match(page.Texte ?? '', /<strong>gras<\/strong>/);
+		assert.doesNotMatch(page.Texte ?? '', /section|script/);
 	});
 });
 

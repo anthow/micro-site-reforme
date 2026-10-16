@@ -17,13 +17,10 @@
 	const slogans = $derived(data.slogans ?? []);
 	const errors = $derived(data.errors);
 
-	const introParagraphs = $derived(
-		homepage?.Texte
-			? homepage.Texte.split(/\n\s*\n+/)
-					.map((paragraph) => paragraph.trim())
-					.filter(Boolean)
-			: []
-	);
+	const introHtml = $derived(homepage?.Texte?.trim() || null);
+
+	const introProse =
+		'font-heading text-[0.95rem] font-medium leading-[1.55] tracking-normal text-ink-light/90 dark:text-ink-dark/90 sm:text-base sm:leading-snug sm:tracking-tight [&_a]:text-accent [&_a]:underline [&_li]:mt-1.5 [&_p]:mb-5 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_strong]:text-accent [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-5 [&_ul:last-child]:mb-0';
 </script>
 
 {#snippet slogan(text: string)}
@@ -66,33 +63,43 @@
 	{/if}
 
 	<section class="border-b border-ink-light/10 dark:border-ink-dark/10">
-		<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+		<div class="mx-auto max-w-3xl px-5 py-8 sm:max-w-6xl sm:px-6 sm:py-10">
+			<div class="mb-4 flex justify-center gap-2 sm:hidden" aria-hidden="true">
+				<img src="/cone.png" alt="" class="h-6 w-auto" />
+				<img src="/cone.png" alt="" class="h-6 w-auto" />
+			</div>
 			<h1
-				class="text-center font-heading text-3xl font-bold leading-[1.05] tracking-tight text-ink-light dark:text-ink-dark sm:text-4xl lg:text-5xl"
+				class="text-balance text-center font-heading text-[1.45rem] font-bold leading-[1.2] tracking-tight text-ink-light dark:text-ink-dark sm:text-4xl sm:leading-tight lg:text-5xl lg:leading-[1.05]"
 			>
-				<span class="inline-flex items-center gap-3">
-					<img src="/cone.png" alt="" class="h-8 w-auto sm:h-10" aria-hidden="true" />
+				<span class="sm:inline-flex sm:items-center sm:gap-3">
+					<img
+						src="/cone.png"
+						alt=""
+						class="hidden h-8 w-auto sm:inline sm:h-10"
+						aria-hidden="true"
+					/>
 					<span>{homepage.Titre}</span>
-					<img src="/cone.png" alt="" class="h-8 w-auto sm:h-10" aria-hidden="true" />
+					<img
+						src="/cone.png"
+						alt=""
+						class="hidden h-8 w-auto sm:inline sm:h-10"
+						aria-hidden="true"
+					/>
 				</span>
 			</h1>
 			{#if slogans[0]}
-				<p class="mt-4 text-center font-heading text-lg font-bold tracking-tight text-accent sm:text-xl">
+				<p class="mt-4 text-center font-heading text-base font-bold tracking-tight text-accent sm:text-xl">
 					{slogans[0]}
 				</p>
 			{/if}
 		</div>
 	</section>
 
-	{#if introParagraphs.length > 0}
-		<section class="mx-auto max-w-5xl px-3 py-7 sm:px-4 sm:py-10">
-			{#each introParagraphs as paragraph}
-				<p
-					class="mb-4 whitespace-pre-line font-heading text-base font-medium leading-snug tracking-tight text-ink-light/90 last:mb-0 dark:text-ink-dark/90 [&_strong]:font-bold"
-				>
-					{@html paragraph}
-				</p>
-			{/each}
+	{#if introHtml}
+		<section class="mx-auto max-w-3xl px-5 py-8 sm:max-w-5xl sm:px-6 sm:py-10">
+			<div class={introProse}>
+				{@html introHtml}
+			</div>
 		</section>
 	{/if}
 
